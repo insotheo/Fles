@@ -1,4 +1,6 @@
+import com.insotheo.fles.token.Lexer;
 import com.insotheo.fles.token.Token;
+import com.insotheo.fles.token.TokenType;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -30,7 +32,20 @@ public class Program {
             }
 
             String fileContent = Files.readString(filePath);
-            System.out.println(fileContent);
+//            System.out.println(fileContent);
+
+            //Fles works since here!
+            Lexer lexer = new Lexer(fileContent);
+
+            Token token = lexer.next();
+            while(true){
+                System.out.println(token.value);
+                if(token.type == TokenType.EOF){
+                    break;
+                }
+                token = lexer.next();
+            }
+
         }
         catch(IOException e){
             System.err.println(String.format("Error reading the file: %s", e.getMessage()));
