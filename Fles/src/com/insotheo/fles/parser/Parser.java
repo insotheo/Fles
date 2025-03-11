@@ -27,7 +27,11 @@ public class Parser {
     }
 
     private ASTNode parseStatement() throws Exception{
-        if(eat(TokenType.Let)){ //variable definition
+        if(eat(TokenType.LBrace)){ //block
+            return parseBlock();
+        }
+
+        else if(eat(TokenType.Let)){ //variable definition
             //let <identifier> : <data_type> ...
             fatalCheck(TokenType.Identifier);
             String identifier = currentToken.value;
@@ -49,6 +53,42 @@ public class Parser {
             }
         }
 
+        else if(eat(TokenType.Fn)){ //function definition
+            fatalCheck(TokenType.Identifier);
+            String funcName = currentToken.value;
+            eatFatal(TokenType.Identifier);
+
+            eatFatal(TokenType.LParen); //parsing parameters
+            List<ParameterNode> funcParameters = new ArrayList<ParameterNode>();
+            while(currentToken != null && currentToken.type != TokenType.RParen){
+                if(currentToken.type == TokenType.Identifier){ //parameter: <identifier> : <data_type>
+                    String parameterIdentifier = currentToken.value;
+                    eatFatal(TokenType.Identifier);
+
+                    eatFatal(TokenType.Colon);
+                    fatalCheck(TokenType.Identifier);
+                    String parameterType = currentToken.value;
+                    eatFatal(TokenType.Identifier);
+
+                    funcParameters.add(new ParameterNode(parameterType, parameterIdentifier));
+                    if(!eat(TokenType.Comma)){
+                        break;
+                    }
+                }
+            }
+            eatFatal(TokenType.RParen);
+
+            eatFatal(TokenType.Colon);
+            fatalCheck(TokenType.Identifier); //return type
+            String funcReturnType = currentToken.value;
+            eatFatal(TokenType.Identifier);
+
+            eatFatal(TokenType.LBrace);
+            BlockNode funcBody = parseBlock();
+
+            return new FunctionNode(funcName, funcReturnType, funcParameters, funcBody);
+        }
+
         else if(currentToken.type == TokenType.Identifier){
             String identifier = currentToken.value;
             eat(TokenType.Identifier);
@@ -61,6 +101,15 @@ public class Parser {
         }
 
         throw new Exception("Unknown command: \"" + currentToken.value + "\"");
+    }
+
+    private BlockNode parseBlock() throws Exception {
+        List<ASTNode> blockStatements = new ArrayList<ASTNode>();
+        while (currentToken != null && currentToken.type != TokenType.RBrace) {
+            blockStatements.add(parseStatement());
+        }
+        eatFatal(TokenType.RBrace);
+        return new BlockNode(blockStatements);
     }
 
     private ASTNode parseFactor() throws Exception{ //for identifiers or ()

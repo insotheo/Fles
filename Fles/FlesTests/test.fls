@@ -1,4 +1,6 @@
-let x : int = 2;
-let y : int = 3;
-x = 3;
-let sum : int = x + y; // 6
+fn main(argc : int) : void{
+    let x : int = 2;
+    let y : int = 3;
+    x = 3;
+    let sum : int = x + y; // 6
+}
