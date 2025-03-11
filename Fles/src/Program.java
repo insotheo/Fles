@@ -1,6 +1,6 @@
-import com.insotheo.fles.token.Lexer;
-import com.insotheo.fles.token.Token;
-import com.insotheo.fles.token.TokenType;
+import com.insotheo.fles.lexer.Lexer;
+import com.insotheo.fles.lexer.Token;
+import com.insotheo.fles.lexer.TokenType;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;

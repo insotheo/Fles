@@ -1,4 +1,4 @@
-package com.insotheo.fles.token;
+package com.insotheo.fles.lexer;
 
 public class Lexer {
     private String content;
@@ -50,6 +50,11 @@ public class Lexer {
                     pos++;
                 }
 
+                switch (identifier){
+                    case "true": return new Token(TokenType.True, "true");
+                    case "false": return new Token(TokenType.False, "false");
+                }
+
                 return new Token(TokenType.Identifier, identifier);
             }
 
@@ -74,12 +79,20 @@ public class Lexer {
                 case ')': pos++; return new Token(TokenType.RParen, ")");
                 case '{': pos++; return new Token(TokenType.LBrace, "{");
                 case '}': pos++; return new Token(TokenType.RBrace, "}");
-                case '[': pos++; return new Token(TokenType.LSquareBracket, "[");
+                case '[':{
+                    pos++;
+                    if(content.charAt(pos) == ']'){
+                        pos++;
+                        return new Token(TokenType.ArrayDef, "[]");
+                    }
+                    return new Token(TokenType.LSquareBracket, "[");
+                }
                 case ']': pos++; return new Token(TokenType.RSquareBracket, "]");
 
                 case '.': pos++; return new Token(TokenType.Point, ".");
                 case ';': pos++; return new Token(TokenType.Semicolon, ";");
                 case ',': pos++; return new Token(TokenType.Comma, ",");
+                case '@': pos++; return new Token(TokenType.At, "@");
 
                 case '=':{
                     pos++;

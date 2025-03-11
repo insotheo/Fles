@@ -1,4 +1,4 @@
-package com.insotheo.fles.token;
+package com.insotheo.fles.lexer;
 
 public class Token {
     public TokenType type;
