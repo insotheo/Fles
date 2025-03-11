@@ -1,5 +1,4 @@
-void main(){
-    int x = 2;
-    int y = 3;
-    int result = 2*x + (3 - 2*y); //2*2+(3-2*3)=4+(3-6)=4+(-3)=1
-}
+let x : int = 2;
+let y : int = 3;
+x = 3;
+let sum : int = x + y; // 6

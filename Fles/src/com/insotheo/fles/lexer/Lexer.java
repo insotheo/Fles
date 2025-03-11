@@ -53,6 +53,8 @@ public class Lexer {
                 switch (identifier){
                     case "true": return new Token(TokenType.True, "true");
                     case "false": return new Token(TokenType.False, "false");
+                    case "let": return new Token(TokenType.Let, "let");
+                    case "fn": return new Token(TokenType.Fn, "fn");
                 }
 
                 return new Token(TokenType.Identifier, identifier);
@@ -93,6 +95,7 @@ public class Lexer {
                 case ';': pos++; return new Token(TokenType.Semicolon, ";");
                 case ',': pos++; return new Token(TokenType.Comma, ",");
                 case '@': pos++; return new Token(TokenType.At, "@");
+                case ':': pos++; return new Token(TokenType.Colon, ":");
 
                 case '=':{
                     pos++;
