@@ -13,6 +13,8 @@ import java.util.List;
 
 public class SourceFile {
     public SourceFile(String pathToFile){
+        Lexer sourceLexer = null;
+        Parser sourceParser = null;
         try {
             Path filePath = Paths.get(pathToFile);
 
@@ -24,15 +26,15 @@ public class SourceFile {
             }
             String content = Files.readString(filePath);
 
-            Lexer sourceLexer = new Lexer(content);
-            Parser sourceParser = new Parser(sourceLexer);
+            sourceLexer = new Lexer(content);
+            sourceParser = new Parser(sourceLexer);
             List<ASTNode> sourceNodes = sourceParser.parse();
         }
         catch(IOException e){
             System.err.println(String.format("Error reading the file: %s", e.getMessage()));
         }
         catch (Exception ex){
-            System.err.println(String.format("Error at file \"%s\": %s", Paths.get(pathToFile).getFileName().toString(), ex.getMessage()));
+            System.err.println(String.format("Error at file \"%s\" at (%s): %s", Paths.get(pathToFile).getFileName().toString(), sourceLexer.getPosition().toString(), ex.getMessage()));
         }
     }
 }

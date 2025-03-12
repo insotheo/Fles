@@ -27,6 +27,8 @@ public class Parser {
     }
 
     private ASTNode parseStatement() throws Exception{
+        String currentTokenValue = currentToken.value; //because identifier is everything so for handling exception correctly
+
         if(eat(TokenType.LBrace)){ //block
             return parseBlock();
         }
@@ -100,7 +102,8 @@ public class Parser {
             }
         }
 
-        throw new Exception("Unknown command: \"" + currentToken.value + "\"");
+        ParserExceptions.throwUnknownCommandException(currentTokenValue);
+        return null;
     }
 
     private BlockNode parseBlock() throws Exception {
@@ -118,6 +121,7 @@ public class Parser {
             eatFatal(TokenType.Number);
             return number;
         }
+
         else if(currentToken.type == TokenType.Identifier){
             String identifier = currentToken.value;
             String type = "auto"; //auto is the same for unknown
@@ -126,7 +130,8 @@ public class Parser {
             return node;
         }
 
-        throw new Exception("Unexpected token in factor: " + currentToken.value);
+        ParserExceptions.throwUnexpectedTokenInFactorException(currentToken);
+        return null;
     }
 
     private ASTNode parseTerm() throws Exception{ //for * or /
@@ -165,7 +170,10 @@ public class Parser {
 
     private void eatFatal(TokenType expected) throws Exception{
         if(currentToken.type != expected){
-            throw new Exception(String.format("Unexpected token(%s)! Expected: %s", currentToken.type.toString(), expected.toString()));
+            if(currentToken.type == TokenType.Unknown) {
+                ParserExceptions.throwUnexpectedTokenException(currentToken.value, expected);
+            }
+            ParserExceptions.throwUnexpectedTokenException(currentToken.type, expected);
         }
         else{
             currentToken = lexer.next();
@@ -174,7 +182,10 @@ public class Parser {
 
     private void fatalCheck(TokenType expected) throws Exception{
         if(currentToken.type != expected){
-            throw new Exception(String.format("Unexpected token(%s)! Expected: %s", currentToken.type.toString(), expected.toString()));
+            if(currentToken.type == TokenType.Unknown) {
+                ParserExceptions.throwUnexpectedTokenException(currentToken.value, expected);
+            }
+            ParserExceptions.throwUnexpectedTokenException(currentToken.type, expected);
         }
     }
 

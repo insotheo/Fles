@@ -182,4 +182,21 @@ public class Lexer {
         return new Token(TokenType.EOF, "EOF");
     }
 
+    public Vector2D getPosition(){
+        int line = 1;
+        int column = 1;
+
+        for(int i = 0; i < pos; i++){
+            if(content.charAt(i) == '\n'){
+                line++;
+                column = 1;
+            }
+            else{
+                column++;
+            }
+        }
+
+        return new Vector2D(line, column);
+    }
+
 }
