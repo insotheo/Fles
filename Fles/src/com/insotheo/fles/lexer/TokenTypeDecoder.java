@@ -16,6 +16,7 @@ public class TokenTypeDecoder {
             case TokenType.StringLiteral -> "String literal";
             case TokenType.LeftShift -> "Left shift";
             case TokenType.RightShift -> "Right shift";
+            case TokenType.ArrayDef -> "Array definition";
             default -> type.toString();
         };
     }

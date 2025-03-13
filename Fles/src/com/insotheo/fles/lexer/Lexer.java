@@ -55,6 +55,7 @@ public class Lexer {
                     case "false": return new Token(TokenType.False, "false");
                     case "let": return new Token(TokenType.Let, "let");
                     case "fn": return new Token(TokenType.Fn, "fn");
+                    case "return": return new Token(TokenType.Return, "return");
                 }
 
                 return new Token(TokenType.Identifier, identifier);

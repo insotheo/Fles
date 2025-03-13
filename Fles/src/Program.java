@@ -8,7 +8,7 @@ public class Program {
             String filePathLine = "";
             if(args.length < 1){
                 Scanner scanner = new Scanner(System.in);
-                System.out.print("Please, enter the path to the *.fls file: ");
+                System.out.print("Please, enter the path to the *.fls file with main function: ");
                 filePathLine = scanner.nextLine();
                 scanner.close();
             }

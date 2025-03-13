@@ -56,6 +56,7 @@ public class Parser {
         }
 
         else if(eat(TokenType.Fn)){ //function definition
+            //fn <identifier>(<args>) : <return_type>{... if return type is void possible way is: fn <identifier>(<args>){...
             fatalCheck(TokenType.Identifier);
             String funcName = currentToken.value;
             eatFatal(TokenType.Identifier);
@@ -80,15 +81,23 @@ public class Parser {
             }
             eatFatal(TokenType.RParen);
 
-            eatFatal(TokenType.Colon);
-            fatalCheck(TokenType.Identifier); //return type
-            String funcReturnType = currentToken.value;
-            eatFatal(TokenType.Identifier);
+            String funcReturnType = "void";
+            if(eat(TokenType.Colon)) {
+                fatalCheck(TokenType.Identifier); //return type
+                funcReturnType = currentToken.value;
+                eatFatal(TokenType.Identifier);
+            }
 
             eatFatal(TokenType.LBrace);
             BlockNode funcBody = parseBlock();
 
             return new FunctionNode(funcName, funcReturnType, funcParameters, funcBody);
+        }
+
+        else if(eat(TokenType.Return)){
+            ASTNode value = parseExpression();
+            eatFatal(TokenType.Semicolon);
+            return new ReturnNode(value);
         }
 
         else if(currentToken.type == TokenType.Identifier){
@@ -99,6 +108,12 @@ public class Parser {
                 ASTNode expression = parseExpression();
                 eatFatal(TokenType.Semicolon);
                 return new AssignmentNode(variable, expression, false);
+            }
+
+            else if(currentToken.type == TokenType.LParen){ //function call
+                FunctionCallNode functionCall = parseFunctionCall(identifier);
+                eatFatal(TokenType.Semicolon);
+                return functionCall;
             }
         }
 
@@ -125,9 +140,26 @@ public class Parser {
         else if(currentToken.type == TokenType.Identifier){
             String identifier = currentToken.value;
             String type = "auto"; //auto is the same for unknown
-            VariableNode node = new VariableNode(type, identifier);
             eatFatal(TokenType.Identifier);
-            return node;
+
+            if(currentToken.type == TokenType.LParen){ //if calls for a function
+                return parseFunctionCall(identifier);
+            }
+            return new VariableNode(type, identifier);
+        }
+
+        else if(currentToken.type == TokenType.LParen){
+            eatFatal(TokenType.LParen);
+            ASTNode result = parseExpression();
+            eatFatal(TokenType.RParen);
+            return result;
+        }
+
+        else if(currentToken.type == TokenType.Plus || currentToken.type == TokenType.Minus){
+            NumberNode multiplier = currentToken.type == TokenType.Plus ? new NumberNode(1) : new NumberNode(-1); //plus or minus
+            eatFatal(currentToken.type);
+            ASTNode value = parseExpression();
+            return new BinaryOperationNode(multiplier, "*", value);
         }
 
         ParserExceptions.throwUnexpectedTokenInFactorException(currentToken);
@@ -158,6 +190,27 @@ public class Parser {
         }
 
         return left;
+    }
+
+    private FunctionCallNode parseFunctionCall(String funcName) throws Exception{
+        eatFatal(TokenType.LParen);
+
+        List<ASTNode> args = new ArrayList<ASTNode>();
+        if(currentToken != null && currentToken.type != TokenType.RParen){
+            do{
+                args.add(parseExpression());
+
+                if(currentToken.type != null && currentToken.type == TokenType.Comma){
+                    eatFatal(TokenType.Comma);
+                }
+                else{
+                    break;
+                }
+            }while(true);
+        }
+
+        eatFatal(TokenType.RParen);
+        return new FunctionCallNode(funcName, args);
     }
 
     private boolean eat(TokenType type) throws Exception{

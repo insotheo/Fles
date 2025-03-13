@@ -13,7 +13,7 @@ public enum TokenType {
 
     Number, StringLiteral, CharLiteral, Identifier,
 
-    ArrayDef, Let, Fn,
+    ArrayDef, Let, Fn, Return,
 
     EOF, Unknown
 }

@@ -29,6 +29,8 @@ public class SourceFile {
             sourceLexer = new Lexer(content);
             sourceParser = new Parser(sourceLexer);
             List<ASTNode> sourceNodes = sourceParser.parse();
+
+            System.out.println(); //For making a break point
         }
         catch(IOException e){
             System.err.println(String.format("Error reading the file: %s", e.getMessage()));
