@@ -137,6 +137,18 @@ public class Parser {
             return number;
         }
 
+        else if(currentToken.type == TokenType.StringLiteral){
+            StringLiteralNode string = new StringLiteralNode(currentToken.value);
+            eatFatal(TokenType.StringLiteral);
+            return string;
+        }
+
+        else if(currentToken.type == TokenType.CharLiteral){
+            CharLiteral character = new CharLiteral(currentToken.value.charAt(0));
+            eatFatal(TokenType.CharLiteral);
+            return character;
+        }
+
         else if(currentToken.type == TokenType.Identifier){
             String identifier = currentToken.value;
             String type = "auto"; //auto is the same for unknown
@@ -159,7 +171,7 @@ public class Parser {
             NumberNode multiplier = currentToken.type == TokenType.Plus ? new NumberNode(1) : new NumberNode(-1); //plus or minus
             eatFatal(currentToken.type);
             ASTNode value = parseExpression();
-            return new BinaryOperationNode(multiplier, "*", value);
+            return new BinaryOperationNode(multiplier, OperationValue.Multiplication, value);
         }
 
         ParserExceptions.throwUnexpectedTokenInFactorException(currentToken);
@@ -173,7 +185,7 @@ public class Parser {
             String operator = currentToken.value;
             eatFatal(currentToken.type);
             ASTNode right = parseFactor();
-            left = new BinaryOperationNode(left, operator, right);
+            left = new BinaryOperationNode(left, operator.equals("*") ? OperationValue.Multiplication : OperationValue.Division, right);
         }
 
         return left;
@@ -186,7 +198,7 @@ public class Parser {
             String operator = currentToken.value;
             eatFatal(currentToken.type);
             ASTNode right = parseTerm();
-            left = new BinaryOperationNode(left, operator, right);
+            left = new BinaryOperationNode(left, operator.equals("+") ? OperationValue.Addition : OperationValue.Subtraction, right);
         }
 
         return left;

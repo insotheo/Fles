@@ -1,11 +1,13 @@
 package com.insotheo.fles.ast;
 
+import com.insotheo.fles.parser.OperationValue;
+
 public class BinaryOperationNode implements ASTNode{
     private final ASTNode leftNode;
-    private final String operation;
+    private final OperationValue operation;
     private final ASTNode rightNode;
 
-    public BinaryOperationNode(ASTNode left, String op, ASTNode right){
+    public BinaryOperationNode(ASTNode left, OperationValue op, ASTNode right){
         leftNode = left;
         operation = op;
         rightNode = right;
@@ -15,7 +17,7 @@ public class BinaryOperationNode implements ASTNode{
         return leftNode;
     }
 
-    public String getOperation(){
+    public OperationValue getOperation(){
         return operation;
     }
 

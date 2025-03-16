@@ -1,13 +1,14 @@
-fn sumAndSquare(x : int, y : int){
-    let sum : int = x + y;
-    return (sum * sum);
-}
-
-fn finishProgram(status : int) : int{
-    //... some code for finishing program ...
-    return status;
-}
-
 fn main(){
-    finishProgram(add(+1, -2));
+    let x : int = 1;
+    let y : int = 4 * (x + 2); //12
+    printSum(x, 2 * y);
+    printVoid();
+}
+
+fn printSum(a : float, b : float) : void{
+    std_print("Sum: " + (a + b));
+}
+
+fn printVoid() : void{
+    std_println();
 }

@@ -171,7 +171,7 @@ public class Lexer {
                         if(pos < content.length() && content.charAt(pos) == '"'){
                             pos++;
                         }
-                        return new Token(TokenType.StringLiteral, literal.trim());
+                        return new Token(TokenType.StringLiteral, literal);
                     }
                     return new Token(TokenType.Quotes, "\"");
                 }
