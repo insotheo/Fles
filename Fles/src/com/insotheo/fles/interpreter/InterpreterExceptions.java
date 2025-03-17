@@ -20,4 +20,8 @@ public class InterpreterExceptions{
     public static void throwRuntimeError(String msg) throws Exception{
         throw new Exception(msg);
     }
+
+    public static void throwCastFailedError(String typeName) throws Exception{
+        throw new Exception(String.format("Failed to cast to %s", typeName));
+    }
 }

@@ -14,27 +14,31 @@ public class FlesEvaluate {
 
     public static FlesValue evalExpression(ASTNode node, List<FlesVariable> variables) throws Exception{
         if(node.getClass() == NumberNode.class){
-            return new FlesValue(String.valueOf(((NumberNode) node).getValue()), ValueType.NumberValue);
+            return new FlesValue(String.valueOf(((NumberNode) node).getValue()), ValueType.Numeric);
         }
         else if(node.getClass() == StringLiteralNode.class){
-            return new FlesValue(((StringLiteralNode) node).getValue(), ValueType.StringValue);
+            return new FlesValue(((StringLiteralNode) node).getValue(), ValueType.StringLiteral);
         }
         else if(node.getClass() == CharLiteral.class){
-            return new FlesValue(String.valueOf(((CharLiteral) node).getValue()), ValueType.CharValue);
+            return new FlesValue(String.valueOf(((CharLiteral) node).getValue()), ValueType.CharLiteral);
         }
+
         else if(node.getClass() == VariableNode.class){
             VariableNode var = ((VariableNode) node);
             boolean varFound = false;
             String value = "";
+            String varType = "";
 
             for(FlesVariable local : variables){
                 if(local.getName().equals(var.getName())){
+                    varType = local.getType().getName();
                     value = local.getValue().getData();
                     varFound = true;
                     break;
                 }
             }
             if(!varFound && InterpreterData.isGlobalVariableAlreadyExist(var.getName())){
+                varType = Objects.requireNonNull(InterpreterData.getVariable(var.getName())).getType().getName();
                 value = Objects.requireNonNull(InterpreterData.getVariable(var.getName())).getValue().getData();
                 varFound = true;
             }
@@ -43,8 +47,8 @@ public class FlesEvaluate {
                 InterpreterExceptions.throwRuntimeError(String.format("Variable %s not found!", var.getName()));
                 return null;
             }
-
-            return new FlesValue(value, FlesValue.parseTypeFromDataType(var.getDataType(), value));
+            
+            return new FlesValue(value, varType);
         }
 
         else if(node.getClass() == BinaryOperationNode.class){
@@ -58,26 +62,21 @@ public class FlesEvaluate {
             }
 
             switch (binaryNode.getOperation()){
-                case Addition: {
+                case Addition:
                     left.add(right);
                     return left;
-                }
 
-                case Subtraction: {
+                case Subtraction:
                     left.subtract(right);
                     return left;
-                }
 
-                case Multiplication: {
+                case Multiplication:
                     left.multiply(right);
                     return left;
-                }
 
-
-                case Division: {
+                case Division:
                     left.divide(right);
                     return left;
-                }
 
                 default: InterpreterExceptions.throwRuntimeError("Unknown operation!");
             }
@@ -98,7 +97,7 @@ public class FlesEvaluate {
 
             else if(node.getClass() == VariableNode.class){
                 VariableNode varNode = ((VariableNode) node);
-                FlesVariable newVariable = new FlesVariable(varNode.getDataType(), varNode.getName());
+                FlesVariable newVariable = new FlesVariable(varNode.getType(), varNode.getName());
                 variables.add(newVariable);
             }
 
@@ -106,7 +105,7 @@ public class FlesEvaluate {
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
                 if(assignmentNode.getIsJustCreated()){
                     VariableNode newVarNode = assignmentNode.getVariable();
-                    FlesVariable newVar = new FlesVariable(newVarNode.getDataType(), newVarNode.getName());
+                    FlesVariable newVar = new FlesVariable(newVarNode.getType(), newVarNode.getName());
                     FlesValue newVarValue = evalExpression(assignmentNode.getValue(), variables);
                     newVar.setData(newVarValue.getData());
                     variables.add(newVar);
@@ -119,7 +118,7 @@ public class FlesEvaluate {
 
                     for(FlesVariable var : variables){
                         if(var.getName().equals(varName)){
-                            var.setValue(value.getData(), value.getType());
+                            var.setValue(value.getData());
                             varFound = true;
                         }
                     }

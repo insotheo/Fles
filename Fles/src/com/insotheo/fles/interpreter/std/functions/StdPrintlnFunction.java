@@ -1,4 +1,4 @@
-package com.insotheo.fles.interpreter.std;
+package com.insotheo.fles.interpreter.std.functions;
 
 import com.insotheo.fles.interpreter.InterpreterExceptions;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
@@ -11,9 +11,9 @@ import java.util.List;
 
 public class StdPrintlnFunction extends FlesFunction {
 
-    public StdPrintlnFunction(){
+    public StdPrintlnFunction() throws Exception{
         List<FlesVariable> params = new ArrayList<FlesVariable>();
-        params.add(new FlesVariable(DataType.Auto, "value", ""));
+        params.add(new FlesVariable("void", "value", ""));
         this.name = "std_println";
         this.statements = new ArrayList<>();
         this.parameters = params;
@@ -22,13 +22,13 @@ public class StdPrintlnFunction extends FlesFunction {
     @Override
     public void call(List<FlesValue> arguments) throws Exception {
         if(arguments.isEmpty()){
-            StdFunctionsImpl.println();
+            System.out.println();
             return;
         }
         else if(arguments.size() != 1){
             InterpreterExceptions.throwRuntimeError("std_println function takes only 1 or zero arguments!");
         }
-        StdFunctionsImpl.println(arguments.get(0));
+        System.out.println(arguments.get(0).getData());
     }
 
 }

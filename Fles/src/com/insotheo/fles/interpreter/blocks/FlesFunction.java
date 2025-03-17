@@ -4,7 +4,6 @@ import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.ast.ParameterNode;
 import com.insotheo.fles.interpreter.FlesEvaluate;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
-import com.insotheo.fles.interpreter.variable.DataTypeImpl;
 import com.insotheo.fles.interpreter.variable.FlesValue;
 import com.insotheo.fles.interpreter.variable.FlesVariable;
 
@@ -22,7 +21,7 @@ public class FlesFunction extends InterpreterBlock {
         this.parameters = new ArrayList<>();
         for(ParameterNode node : parameters){
             this.parameters.add(new FlesVariable(
-                    DataTypeImpl.parseDataType(node.getType()),
+                    node.getType(),
                     node.getName(),
                     ""
             ));
@@ -34,13 +33,13 @@ public class FlesFunction extends InterpreterBlock {
             InterpreterExceptions.throwRuntimeError(String.format("For function %s amount of gotten arguments is not equal to amount of parameters amount!", this.getName()));
         }
         for(int i = 0; i < parameters.size(); i++){
-            parameters.get(i).setValue(arguments.get(i).getData(), arguments.get(i).getType());
+            parameters.get(i).setValue(arguments.get(i).getData());
         }
 
         FlesEvaluate.evalFunction(this);
 
         for(FlesVariable param : parameters){
-            param.setValue(null);
+            param.setValue("");
         }
     }
 

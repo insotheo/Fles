@@ -1,20 +1,29 @@
 package com.insotheo.fles.interpreter.variable;
 
+import com.insotheo.fles.interpreter.InterpreterData;
+import com.insotheo.fles.interpreter.InterpreterExceptions;
+
 public class FlesVariable {
     private final DataType type;
     private final String name;
     private FlesValue value;
 
-    public FlesVariable(DataType type, String name, String value){
-        this.type = type;
+    public FlesVariable(String type, String name, String value) throws Exception{
+        if(type.equals("auto")){
+            type = InterpreterData.findAutoType(value);
+        }
+        this.type = InterpreterData.getDataType(type);
         this.name = name;
-        setValue(value, FlesValue.parseTypeFromDataType(this.type, value));
+        setValue(value);
     }
 
-    public FlesVariable(DataType type, String name){
-        this.type = type;
+    public FlesVariable(String type, String name) throws Exception{
+        if(type.equals("auto")){
+            InterpreterExceptions.throwRuntimeError("Can't find a type instead of auto if the value is null!");
+        }
+        this.type = InterpreterData.getDataType(type);
         this.name = name;
-        setValue(new FlesValue("", FlesValue.parseTypeFromDataType(this.type, "")));
+        setValue(new FlesValue("", this.type.getName()));
     }
 
     public DataType getType() {
@@ -33,28 +42,13 @@ public class FlesVariable {
         this.value = value;
     }
 
-    public void setValue(String value, ValueType valType){
-        String resultValue = value;
-        if((type == DataType.Int || type == DataType.Float) && FlesValue.inferValueType(value) == valType && valType == ValueType.NumberValue){
-            double inputValue = Double.parseDouble(value);
-            if(type == DataType.Int){
-                int result = ((int)inputValue);
-                resultValue = String.valueOf(result);
-            }
-            else if(type == DataType.Float){
-                resultValue = String.valueOf(inputValue);
-            }
-        }
-
-        if(type == DataType.Char && valType == ValueType.CharValue){
-            resultValue = String.valueOf(value.charAt(0));
-        }
-
-        this.value = new FlesValue(resultValue, valType);
+    public void setValue(String value) throws Exception{
+        this.value = new FlesValue(type.inferValue(value), type.getName());
     }
 
-    public void setData(String data){
-        ValueType valType = this.value.getType();
-        setValue(data, valType);
+    public void setData(String data) throws Exception{
+        String resultData = type.inferValue(data);
+        this.value.setData(resultData);
     }
+
 }

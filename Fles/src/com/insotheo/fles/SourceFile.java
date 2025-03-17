@@ -2,6 +2,7 @@ package com.insotheo.fles;
 
 import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.interpreter.FlesInterpreter;
+import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.lexer.Lexer;
 import com.insotheo.fles.parser.Parser;
 

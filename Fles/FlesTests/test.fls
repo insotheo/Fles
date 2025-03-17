@@ -1,14 +1,10 @@
+fn printInfoAboutPerson(name : string, age : int, phrase : string){
+    std_println("Hi! My name is " + name + "! And I'm " + age + ". I say: '" + phrase + "'.");
+}
+
 fn main(){
-    let x : int = 1;
-    let y : int = 4 * (x + 2); //12
-    printSum(x, 2 * y);
-    printVoid();
-}
-
-fn printSum(a : float, b : float) : void{
-    std_print("Sum: " + (a + b));
-}
-
-fn printVoid() : void{
-    std_println();
+    //Person
+    let name : string = "Person";
+    let age : int = 99;
+    printInfoAboutPerson(name, age, "Hello, World" + "!");
 }
