@@ -3,6 +3,7 @@ package com.insotheo.fles.interpreter;
 import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.ast.FunctionNode;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
+import com.insotheo.fles.interpreter.std.functions.StdExitFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintlnFunction;
 import com.insotheo.fles.interpreter.std.types.*;
@@ -26,6 +27,7 @@ public class FlesInterpreter {
         //functions
         InterpreterData.addFunction(new StdPrintFunction());
         InterpreterData.addFunction(new StdPrintlnFunction());
+        InterpreterData.addFunction(new StdExitFunction());
 
         //....
 

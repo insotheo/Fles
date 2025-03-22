@@ -1,5 +1,6 @@
 package com.insotheo.fles.interpreter.std.functions;
 
+import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
 import com.insotheo.fles.interpreter.variable.BlockReturn;
@@ -9,24 +10,22 @@ import com.insotheo.fles.interpreter.variable.FlesVariable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StdPrintFunction extends FlesFunction {
+public class StdExitFunction extends FlesFunction {
 
-    public StdPrintFunction() throws Exception{
-        List<FlesVariable> params = new ArrayList<FlesVariable>();
-        params.add(new FlesVariable("void", "value", ""));
-        this.name = "std_print";
-        this.statements = new ArrayList<>();
-        this.parameters = params;
+    public StdExitFunction() throws Exception{
+        this.name = "std_exit";
+        this.statements = new ArrayList<ASTNode>();
+        this.parameters = new ArrayList<FlesVariable>();
         this.returnType = "void";
     }
 
     @Override
     public BlockReturn call(List<FlesValue> arguments) throws Exception {
-        if(arguments.size() != 1){
-            InterpreterExceptions.throwRuntimeError("std_print function takes only 1 argument!");
+        if(!arguments.isEmpty()){
+            InterpreterExceptions.throwRuntimeError("std_exit doesn't accept any arguments!");
         }
 
-        System.out.print(arguments.get(0).getData());
+        System.exit(0);
 
         clearParametersValues();
         return null;

@@ -45,9 +45,7 @@ public class FlesFunction extends InterpreterBlock {
 
         BlockReturn returnValue = FlesEvaluate.evalFunction(this);
 
-        for(FlesVariable param : parameters){
-            param.setValue("");
-        }
+        clearParametersValues();
 
         return returnValue;
     }
@@ -58,5 +56,11 @@ public class FlesFunction extends InterpreterBlock {
 
     public String getReturnType() {
         return returnType;
+    }
+
+    public void clearParametersValues() throws Exception{
+        for(FlesVariable param : parameters){
+            param.setValue("");
+        }
     }
 }

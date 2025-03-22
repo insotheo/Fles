@@ -3,9 +3,7 @@ fn x(){
 }
 
 fn main(){
-    let x : int = {
-        return 2 + 2;
-    } - 3;
     x();
-    std_println(x);
+    std_exit();
+    main();
 }

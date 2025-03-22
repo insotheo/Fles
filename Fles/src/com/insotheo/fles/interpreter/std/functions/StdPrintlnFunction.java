@@ -31,9 +31,7 @@ public class StdPrintlnFunction extends FlesFunction {
         }
         System.out.println(arguments.get(0).getData());
 
-        for(FlesVariable param : parameters){
-            param.setValue("");
-        }
+        clearParametersValues();
         return null;
     }
 
