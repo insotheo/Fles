@@ -1,9 +1,13 @@
 fn x(){
-    std_println("Hello from x()!");
+    std_println(x);
 }
+
+fn add(a : float, b : float) : float{
+    return a + b;
+}
+
+let x : int = add(1, 2) * -2;
 
 fn main(){
     x();
-    std_exit();
-    main();
 }
