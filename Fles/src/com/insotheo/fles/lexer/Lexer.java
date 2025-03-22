@@ -56,6 +56,8 @@ public class Lexer {
                     case "let": return new Token(TokenType.Let, "let");
                     case "fn": return new Token(TokenType.Fn, "fn");
                     case "return": return new Token(TokenType.Return, "return");
+                    case "delete": return new Token(TokenType.Delete, "delete");
+                    case "global": return new Token(TokenType.GlobalModifier, "global");
                 }
 
                 return new Token(TokenType.Identifier, identifier);

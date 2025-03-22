@@ -1,10 +1,7 @@
 package com.insotheo.fles.interpreter;
 
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
-import com.insotheo.fles.interpreter.variable.BlockReturn;
-import com.insotheo.fles.interpreter.variable.DataType;
-import com.insotheo.fles.interpreter.variable.FlesValue;
-import com.insotheo.fles.interpreter.variable.FlesVariable;
+import com.insotheo.fles.interpreter.variable.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +25,7 @@ public class InterpreterData {
                 return returnValue;
             }
         }
-        InterpreterExceptions.throwNoFunctionExists(name);
+        InterpreterExceptions.throwFunctionNotFound(name);
         return null;
     }
 
@@ -38,7 +35,7 @@ public class InterpreterData {
                 return var;
             }
         }
-        InterpreterExceptions.throwNoVariableExists(name);
+        InterpreterExceptions.throwVariableNotFound(name);
         return null;
     }
 
@@ -124,5 +121,19 @@ public class InterpreterData {
                 var.setValue(value.getData());
             }
         }
+    }
+
+    public static void deleteGlobalVariable(String variableName) throws Exception{
+        if(!isGlobalVariableAlreadyExist(variableName)){
+            InterpreterExceptions.throwRuntimeError(String.format("Can't delete global variable '%s', because it doesn't exist!", variableName));
+        }
+        int index = -1;
+        for(FlesVariable var : globalVariables){
+            if(var.getName().equals(variableName)){
+                index = globalVariables.indexOf(var);
+                var = null;
+            }
+        }
+        globalVariables.remove(index);
     }
 }

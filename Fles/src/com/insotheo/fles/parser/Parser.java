@@ -100,6 +100,28 @@ public class Parser {
             return new ReturnNode(value);
         }
 
+        else if(eat(TokenType.Delete)){
+            boolean isGlobal = false;
+            if(eat(TokenType.GlobalModifier)){
+                isGlobal = true;
+            }
+
+            fatalCheck(TokenType.Identifier);
+            String identifier = currentToken.value;
+            eatFatal(TokenType.Identifier);
+            eatFatal(TokenType.Semicolon);
+
+            DeleteTypeValue type = DeleteTypeValue.Unknown;
+            if(isGlobal){
+                type = DeleteTypeValue.GlobalVariable;
+            }
+            else{
+                type = DeleteTypeValue.Variable;
+            }
+
+            return new DeleteNode(identifier, type);
+        }
+
         else if(currentToken.type == TokenType.Identifier){
             String identifier = currentToken.value;
             eat(TokenType.Identifier);

@@ -6,6 +6,7 @@ import com.insotheo.fles.interpreter.variable.BlockReturn;
 import com.insotheo.fles.interpreter.variable.FlesValue;
 import com.insotheo.fles.interpreter.variable.FlesVariable;
 import com.insotheo.fles.interpreter.variable.ValueType;
+import com.insotheo.fles.parser.DeleteTypeValue;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class FlesEvaluate {
             }
 
             if(!varFound){
-                InterpreterExceptions.throwRuntimeError(String.format("Variable %s not found!", var.getName()));
+                InterpreterExceptions.throwVariableNotFound(var.getName());
                 return null;
             }
             
@@ -107,28 +108,18 @@ public class FlesEvaluate {
 
             else if(node.getClass() == VariableNode.class){
                 VariableNode varNode = ((VariableNode) node);
-                for(FlesVariable var : variables){
-                    if(var.getName().equals(varNode.getName())){
-                        InterpreterExceptions.throwRuntimeError(String.format("Variable with name %s already exists!", varNode.getName()));
-                    }
-                }
                 FlesVariable newVariable = new FlesVariable(varNode.getType(), varNode.getName());
-                variables.add(newVariable);
+                variables = addVariable(variables, newVariable);
             }
 
             else if(node.getClass() == AssignmentNode.class){
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
                 if(assignmentNode.getIsJustCreated()){
                     VariableNode newVarNode = assignmentNode.getVariable();
-                    for(FlesVariable var : variables){
-                        if(var.getName().equals(newVarNode.getName())){
-                            InterpreterExceptions.throwRuntimeError(String.format("Variable with name %s already exists!", newVarNode.getName()));
-                        }
-                    }
                     FlesVariable newVar = new FlesVariable(newVarNode.getType(), newVarNode.getName());
                     FlesValue newVarValue = evalExpression(assignmentNode.getValue(), variables);
                     newVar.setData(newVarValue.getData());
-                    variables.add(newVar);
+                    variables = addVariable(variables, newVar);
                 }
 
                 else{
@@ -159,6 +150,19 @@ public class FlesEvaluate {
                 FlesValue value = evalExpression(((ReturnNode) node).getValue(), variables);
                 return new BlockReturn(value);
             }
+
+            else if(node.getClass() == DeleteNode.class){
+                DeleteNode delNode = ((DeleteNode) node);
+                switch (delNode.getDeleteType()){
+                    case DeleteTypeValue.Variable:
+                        variables = deleteVariable(variables, delNode.getName());
+                        break;
+
+                    case DeleteTypeValue.GlobalVariable:
+                        InterpreterData.deleteGlobalVariable(delNode.getName());
+                        break;
+                }
+            }
         }
         variables.clear();
         return null;
@@ -176,6 +180,35 @@ public class FlesEvaluate {
             arguments.add(val);
         }
         return InterpreterData.callFunction(callNode.getName(), arguments);
+    }
+
+    private static List<FlesVariable> addVariable(List<FlesVariable> variables, FlesVariable newVar) throws Exception{
+        for(FlesVariable var : variables){
+            if(var.getName().equals(newVar.getName())){
+                InterpreterExceptions.throwRuntimeError(String.format("Variable with name '%s' already exists!", newVar.getName()));
+            }
+        }
+        if(InterpreterData.isGlobalVariableAlreadyExist(newVar.getName())){
+            InterpreterExceptions.throwRuntimeError(String.format("Variable with name '%s' already exists!", newVar.getName()));
+        }
+        variables.add(newVar);
+        return variables;
+    }
+
+    private static List<FlesVariable> deleteVariable(List<FlesVariable> variables, String name) throws Exception{
+        int index = -1;
+        for(FlesVariable var : variables){
+            if(var.getName().equals(name)){
+                index = variables.indexOf(var);
+            }
+        }
+
+        if(index == -1){
+            InterpreterExceptions.throwRuntimeError(String.format("Can't delete variable '%s', because it doesn't exist!", name));
+        }
+
+        variables.remove(index);
+        return variables;
     }
 
 }

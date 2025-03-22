@@ -1,13 +1,24 @@
-fn x(){
-    std_println(x);
+let counter : int = 0;
+
+fn increase() : int{
+    counter = counter + 1;
 }
 
-fn add(a : float, b : float) : float{
-    return a + b;
+fn decrease(){
+    counter = counter - 1;
 }
-
-let x : int = add(1, 2) * -2;
 
 fn main(){
-    x();
+    increase();
+    increase();
+    increase();
+    decrease();
+    increase();
+    increase();
+    increase();
+    increase();
+    increase();
+    std_println(counter);
+    delete global counter;
+    increase(); //error! counter not found!
 }

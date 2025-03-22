@@ -5,16 +5,16 @@ public class InterpreterExceptions{
         throw new Exception("main() function was not found!");
     }
 
-    public static void throwNoFunctionExists(String funcName) throws Exception{
-        throw new Exception(String.format("No function %s exists!", funcName));
+    public static void throwFunctionNotFound(String funcName) throws Exception{
+        throw new Exception(String.format("Function '%s' not found!", funcName));
     }
 
-    public static void throwNoVariableExists(String varName) throws Exception{
-        throw new Exception(String.format("No variable %s exists!", varName));
+    public static void throwVariableNotFound(String varName) throws Exception{
+        throw new Exception(String.format("Variable '%s' not found!", varName));
     }
 
     public static void throwUnknownDataType(String type) throws Exception{
-        throw new Exception(String.format("Unknown data type %s!", type));
+        throw new Exception(String.format("Unknown data type '%s'!", type));
     }
 
     public static void throwRuntimeError(String msg) throws Exception{
