@@ -1,10 +1,11 @@
-fn printInfoAboutPerson(name : string, age : int, phrase : string){
-    std_println("Hi! My name is " + name + "! And I'm " + age + ". I say: '" + phrase + "'.");
+fn x(){
+    std_println("Hello from x()!");
 }
 
 fn main(){
-    //Person
-    let name : string = "Person";
-    let age : int = 99;
-    printInfoAboutPerson(name, age, "Hello, World" + "!");
+    let x : int = {
+        return 2 + 2;
+    } - 3;
+    x();
+    std_println(x);
 }

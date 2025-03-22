@@ -2,6 +2,7 @@ package com.insotheo.fles.interpreter;
 
 import com.insotheo.fles.ast.*;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
+import com.insotheo.fles.interpreter.variable.BlockReturn;
 import com.insotheo.fles.interpreter.variable.FlesValue;
 import com.insotheo.fles.interpreter.variable.FlesVariable;
 import com.insotheo.fles.interpreter.variable.ValueType;
@@ -21,6 +22,15 @@ public class FlesEvaluate {
         }
         else if(node.getClass() == CharLiteral.class){
             return new FlesValue(String.valueOf(((CharLiteral) node).getValue()), ValueType.CharLiteral);
+        }
+
+        else if(node.getClass() == FunctionCallNode.class){
+            FunctionCallNode funcCallNode = ((FunctionCallNode) node);
+            return evalFunctionCall(funcCallNode, variables).getReturnValue();
+        }
+
+        else if(node.getClass() == BlockNode.class){
+            return evalBlock(((BlockNode) node).getStatements(), variables).getReturnValue();
         }
 
         else if(node.getClass() == VariableNode.class){
@@ -87,7 +97,7 @@ public class FlesEvaluate {
         return null;
     }
 
-    public static void evalBlock(List<ASTNode> nodes, List<FlesVariable> inputVariables) throws Exception{
+    public static BlockReturn evalBlock(List<ASTNode> nodes, List<FlesVariable> inputVariables) throws Exception{
         List<FlesVariable> variables = new ArrayList<>(inputVariables);
         for(ASTNode node : nodes){
             if(node.getClass() == FunctionCallNode.class){
@@ -97,6 +107,11 @@ public class FlesEvaluate {
 
             else if(node.getClass() == VariableNode.class){
                 VariableNode varNode = ((VariableNode) node);
+                for(FlesVariable var : variables){
+                    if(var.getName().equals(varNode.getName())){
+                        InterpreterExceptions.throwRuntimeError(String.format("Variable with name %s already exists!", varNode.getName()));
+                    }
+                }
                 FlesVariable newVariable = new FlesVariable(varNode.getType(), varNode.getName());
                 variables.add(newVariable);
             }
@@ -105,6 +120,11 @@ public class FlesEvaluate {
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
                 if(assignmentNode.getIsJustCreated()){
                     VariableNode newVarNode = assignmentNode.getVariable();
+                    for(FlesVariable var : variables){
+                        if(var.getName().equals(newVarNode.getName())){
+                            InterpreterExceptions.throwRuntimeError(String.format("Variable with name %s already exists!", newVarNode.getName()));
+                        }
+                    }
                     FlesVariable newVar = new FlesVariable(newVarNode.getType(), newVarNode.getName());
                     FlesValue newVarValue = evalExpression(assignmentNode.getValue(), variables);
                     newVar.setData(newVarValue.getData());
@@ -129,27 +149,33 @@ public class FlesEvaluate {
 
                     if(!varFound){
                         InterpreterExceptions.throwRuntimeError(String.format("Can't do assignment because of there is no variable with name %s exist!", varName));
-                        return;
+                        return null;
                     }
 
                 }
             }
+
+            else if(node.getClass() == ReturnNode.class){
+                FlesValue value = evalExpression(((ReturnNode) node).getValue(), variables);
+                return new BlockReturn(value);
+            }
         }
         variables.clear();
+        return null;
     }
 
-    public static void evalFunction(FlesFunction function) throws Exception{
-        evalBlock(function.getStatements(), function.getParameters());
+    public static BlockReturn evalFunction(FlesFunction function) throws Exception{
+        return evalBlock(function.getStatements(), function.getParameters());
     }
 
-    public static void evalFunctionCall(FunctionCallNode callNode, List<FlesVariable> variables) throws Exception{
+    public static BlockReturn evalFunctionCall(FunctionCallNode callNode, List<FlesVariable> variables) throws Exception{
         List<FlesValue> arguments = new ArrayList<>();
         List<ASTNode> expressions = callNode.getArguments();
         for(ASTNode node : expressions){
             FlesValue val = evalExpression(node, variables);
             arguments.add(val);
         }
-        InterpreterData.callFunction(callNode.getName(), arguments);
+        return InterpreterData.callFunction(callNode.getName(), arguments);
     }
 
 }

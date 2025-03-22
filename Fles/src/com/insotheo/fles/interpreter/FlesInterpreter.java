@@ -32,7 +32,7 @@ public class FlesInterpreter {
         for (ASTNode node : nodes) {
             if (node.getClass() == FunctionNode.class) {
                 FunctionNode func = ((FunctionNode) node);
-                InterpreterData.addFunction(new FlesFunction(func.getName(), func.getBody().getStatements(), func.getParameters()));
+                InterpreterData.addFunction(new FlesFunction(func.getName(), func.getBody().getStatements(), func.getParameters(), func.getReturnType()));
             }
         }
     }

@@ -130,7 +130,14 @@ public class Parser {
         return new BlockNode(blockStatements);
     }
 
-    private ASTNode parseFactor() throws Exception{ //for identifiers or ()
+    private ASTNode parseFactor() throws Exception{//for identifiers or ()
+        if(currentToken.type == TokenType.Plus || currentToken.type == TokenType.Minus){
+            NumberNode multiplier = currentToken.type == TokenType.Plus ? new NumberNode(1) : new NumberNode(-1); //plus or minus
+            eatFatal(currentToken.type);
+            ASTNode value = parseFactor();
+            return new BinaryOperationNode(multiplier, OperationValue.Multiplication, value);
+        }
+
         if(currentToken.type == TokenType.Number){
             NumberNode number = new NumberNode(Double.parseDouble(currentToken.value));
             eatFatal(TokenType.Number);
@@ -167,11 +174,10 @@ public class Parser {
             return result;
         }
 
-        else if(currentToken.type == TokenType.Plus || currentToken.type == TokenType.Minus){
-            NumberNode multiplier = currentToken.type == TokenType.Plus ? new NumberNode(1) : new NumberNode(-1); //plus or minus
-            eatFatal(currentToken.type);
-            ASTNode value = parseExpression();
-            return new BinaryOperationNode(multiplier, OperationValue.Multiplication, value);
+        else if(currentToken.type == TokenType.LBrace){
+            eatFatal(TokenType.LBrace);
+            BlockNode result = parseBlock();
+            return result;
         }
 
         ParserExceptions.throwUnexpectedTokenInFactorException(currentToken);

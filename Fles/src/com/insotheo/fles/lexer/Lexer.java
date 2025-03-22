@@ -173,7 +173,8 @@ public class Lexer {
                         }
                         return new Token(TokenType.StringLiteral, literal);
                     }
-                    return new Token(TokenType.Quotes, "\"");
+                    pos++;
+                    return new Token(TokenType.StringLiteral, "");
                 }
             }
 

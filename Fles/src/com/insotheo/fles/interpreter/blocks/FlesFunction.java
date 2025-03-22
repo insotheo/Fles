@@ -3,7 +3,9 @@ package com.insotheo.fles.interpreter.blocks;
 import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.ast.ParameterNode;
 import com.insotheo.fles.interpreter.FlesEvaluate;
+import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
+import com.insotheo.fles.interpreter.variable.BlockReturn;
 import com.insotheo.fles.interpreter.variable.FlesValue;
 import com.insotheo.fles.interpreter.variable.FlesVariable;
 
@@ -12,13 +14,18 @@ import java.util.List;
 
 public class FlesFunction extends InterpreterBlock {
     protected List<FlesVariable> parameters;
+    protected String returnType;
 
     protected FlesFunction(){}
 
-    public FlesFunction(String name, List<ASTNode> statements, List<ParameterNode> parameters) throws Exception{
+    public FlesFunction(String name, List<ASTNode> statements, List<ParameterNode> parameters, String returnType) throws Exception{
         this.name = name;
         this.statements = statements;
         this.parameters = new ArrayList<>();
+        if(!InterpreterData.isTypeDefined(returnType)){
+            InterpreterExceptions.throwUnknownDataType(returnType);
+        }
+        this.returnType = returnType;
         for(ParameterNode node : parameters){
             this.parameters.add(new FlesVariable(
                     node.getType(),
@@ -28,7 +35,7 @@ public class FlesFunction extends InterpreterBlock {
         }
     }
 
-    public void call(List<FlesValue> arguments) throws Exception{
+    public BlockReturn call(List<FlesValue> arguments) throws Exception{
         if(arguments.size() != parameters.size()){
             InterpreterExceptions.throwRuntimeError(String.format("For function %s amount of gotten arguments is not equal to amount of parameters amount!", this.getName()));
         }
@@ -36,14 +43,20 @@ public class FlesFunction extends InterpreterBlock {
             parameters.get(i).setValue(arguments.get(i).getData());
         }
 
-        FlesEvaluate.evalFunction(this);
+        BlockReturn returnValue = FlesEvaluate.evalFunction(this);
 
         for(FlesVariable param : parameters){
             param.setValue("");
         }
+
+        return returnValue;
     }
 
     public List<FlesVariable> getParameters() {
         return parameters;
+    }
+
+    public String getReturnType() {
+        return returnType;
     }
 }

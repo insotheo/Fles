@@ -1,6 +1,7 @@
 package com.insotheo.fles.interpreter;
 
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
+import com.insotheo.fles.interpreter.variable.BlockReturn;
 import com.insotheo.fles.interpreter.variable.DataType;
 import com.insotheo.fles.interpreter.variable.FlesValue;
 import com.insotheo.fles.interpreter.variable.FlesVariable;
@@ -17,14 +18,18 @@ public class InterpreterData {
     /// FUNCTIONS
     ///
 
-    public static void callFunction(String name, List<FlesValue> values) throws Exception{
+    public static BlockReturn callFunction(String name, List<FlesValue> values) throws Exception{
         for(FlesFunction function : functions){
             if(function.getName().equals(name)){
-                function.call(values);
-                return;
+                BlockReturn returnValue = function.call(values);
+                if(function.getReturnType().equals("void")){
+                    return null;
+                }
+                return returnValue;
             }
         }
         InterpreterExceptions.throwNoFunctionExists(name);
+        return null;
     }
 
     public static FlesVariable getVariable(String name) throws Exception{
