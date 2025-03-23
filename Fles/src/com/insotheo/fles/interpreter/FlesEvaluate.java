@@ -2,27 +2,23 @@ package com.insotheo.fles.interpreter;
 
 import com.insotheo.fles.ast.*;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
-import com.insotheo.fles.interpreter.variable.BlockReturn;
-import com.insotheo.fles.interpreter.variable.FlesValue;
-import com.insotheo.fles.interpreter.variable.FlesVariable;
-import com.insotheo.fles.interpreter.variable.ValueType;
+import com.insotheo.fles.interpreter.data.*;
 import com.insotheo.fles.parser.DeleteTypeValue;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class FlesEvaluate {
 
-    public static FlesValue evalExpression(ASTNode node, List<FlesVariable> variables) throws Exception{
+    public static FlesValue evalExpression(ASTNode node, VariableStack variables) throws Exception{
         if(node.getClass() == NumberNode.class){
-            return new FlesValue(String.valueOf(((NumberNode) node).getValue()), ValueType.Numeric);
+            return new FlesValue(ValueType.Numeric, ((NumberNode) node).getValue());
         }
         else if(node.getClass() == StringLiteralNode.class){
-            return new FlesValue(((StringLiteralNode) node).getValue(), ValueType.StringLiteral);
+            return new FlesValue(ValueType.StringLiteral, ((StringLiteralNode) node).getValue());
         }
         else if(node.getClass() == CharLiteral.class){
-            return new FlesValue(String.valueOf(((CharLiteral) node).getValue()), ValueType.CharLiteral);
+            return new FlesValue(ValueType.CharLiteral, ((CharLiteral) node).getValue());
         }
 
         else if(node.getClass() == FunctionCallNode.class){
@@ -36,30 +32,26 @@ public class FlesEvaluate {
 
         else if(node.getClass() == VariableNode.class){
             VariableNode var = ((VariableNode) node);
-            boolean varFound = false;
-            String value = "";
+            final String varName = var.getName();
+            FlesValue value = null;
             String varType = "";
 
-            for(FlesVariable local : variables){
-                if(local.getName().equals(var.getName())){
-                    varType = local.getType().getName();
-                    value = local.getValue().getData();
-                    varFound = true;
-                    break;
-                }
+            if(variables.isVariableInStack(varName)){
+                final FlesVariable variable = variables.getVariable(varName);
+                value = variable.getValue();
+                varType = variable.getTypeName();
             }
-            if(!varFound && InterpreterData.isGlobalVariableAlreadyExist(var.getName())){
-                varType = Objects.requireNonNull(InterpreterData.getVariable(var.getName())).getType().getName();
-                value = Objects.requireNonNull(InterpreterData.getVariable(var.getName())).getValue().getData();
-                varFound = true;
+            else if(InterpreterData.isGlobalVariableAlreadyExist(varName)){
+                final FlesVariable variable = InterpreterData.getVariable(varName);
+                value = variable.getValue();
+                varType = variable.getTypeName();
             }
-
-            if(!varFound){
+            else{
                 InterpreterExceptions.throwVariableNotFound(var.getName());
                 return null;
             }
             
-            return new FlesValue(value, varType);
+            return new FlesValue(varType, value.getData());
         }
 
         else if(node.getClass() == BinaryOperationNode.class){
@@ -98,8 +90,10 @@ public class FlesEvaluate {
         return null;
     }
 
-    public static BlockReturn evalBlock(List<ASTNode> nodes, List<FlesVariable> inputVariables) throws Exception{
-        List<FlesVariable> variables = new ArrayList<>(inputVariables);
+    public static BlockReturn evalBlock(List<ASTNode> nodes, VariableStack inputVariables) throws Exception{
+        VariableStack variables = new VariableStack();
+        variables.merge(inputVariables);
+
         for(ASTNode node : nodes){
             if(node.getClass() == FunctionCallNode.class){
                 FunctionCallNode callNode = ((FunctionCallNode) node);
@@ -108,37 +102,31 @@ public class FlesEvaluate {
 
             else if(node.getClass() == VariableNode.class){
                 VariableNode varNode = ((VariableNode) node);
-                FlesVariable newVariable = new FlesVariable(varNode.getType(), varNode.getName());
-                variables = addVariable(variables, newVariable);
+                FlesVariable newVariable = new FlesVariable(varNode.getType());
+                variables = addVariable(variables, varNode.getName(), newVariable);
             }
 
             else if(node.getClass() == AssignmentNode.class){
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
                 if(assignmentNode.getIsJustCreated()){
                     VariableNode newVarNode = assignmentNode.getVariable();
-                    FlesVariable newVar = new FlesVariable(newVarNode.getType(), newVarNode.getName());
+                    FlesVariable newVar = new FlesVariable(newVarNode.getType());
                     FlesValue newVarValue = evalExpression(assignmentNode.getValue(), variables);
                     newVar.setData(newVarValue.getData());
-                    variables = addVariable(variables, newVar);
+                    variables = addVariable(variables, newVarNode.getName(), newVar);
                 }
 
                 else{
                     String varName = assignmentNode.getVariable().getName();
-                    boolean varFound = false;
                     FlesValue value = evalExpression(assignmentNode.getValue(), variables);
 
-                    for(FlesVariable var : variables){
-                        if(var.getName().equals(varName)){
-                            var.setValue(value.getData());
-                            varFound = true;
-                        }
+                    if(variables.isVariableInStack(varName)){
+                        variables.setVariableValue(varName, value);
                     }
-                    if(!varFound && InterpreterData.isGlobalVariableAlreadyExist(varName)){
+                    else if(InterpreterData.isGlobalVariableAlreadyExist(varName)){
                         InterpreterData.setGlobalVariableValue(varName, value);
-                        varFound = true;
                     }
-
-                    if(!varFound){
+                    else{
                         InterpreterExceptions.throwRuntimeError(String.format("Can't do assignment because of there is no variable with name %s exist!", varName));
                         return null;
                     }
@@ -164,7 +152,8 @@ public class FlesEvaluate {
                 }
             }
         }
-        variables.clear();
+
+        variables.clearStack();
         return null;
     }
 
@@ -172,7 +161,7 @@ public class FlesEvaluate {
         return evalBlock(function.getStatements(), function.getParameters());
     }
 
-    public static BlockReturn evalFunctionCall(FunctionCallNode callNode, List<FlesVariable> variables) throws Exception{
+    public static BlockReturn evalFunctionCall(FunctionCallNode callNode, VariableStack variables) throws Exception{
         List<FlesValue> arguments = new ArrayList<>();
         List<ASTNode> expressions = callNode.getArguments();
         for(ASTNode node : expressions){
@@ -182,32 +171,19 @@ public class FlesEvaluate {
         return InterpreterData.callFunction(callNode.getName(), arguments);
     }
 
-    private static List<FlesVariable> addVariable(List<FlesVariable> variables, FlesVariable newVar) throws Exception{
-        for(FlesVariable var : variables){
-            if(var.getName().equals(newVar.getName())){
-                InterpreterExceptions.throwRuntimeError(String.format("Variable with name '%s' already exists!", newVar.getName()));
-            }
+    private static VariableStack addVariable(VariableStack variables, String name, FlesVariable newVar) throws Exception{
+        if(variables.isVariableInStack(name) || InterpreterData.isGlobalVariableAlreadyExist(name)){
+            InterpreterExceptions.throwVariableIsAlreadyInStack(name);
         }
-        if(InterpreterData.isGlobalVariableAlreadyExist(newVar.getName())){
-            InterpreterExceptions.throwRuntimeError(String.format("Variable with name '%s' already exists!", newVar.getName()));
-        }
-        variables.add(newVar);
+        variables.pushVariable(name, newVar);
         return variables;
     }
 
-    private static List<FlesVariable> deleteVariable(List<FlesVariable> variables, String name) throws Exception{
-        int index = -1;
-        for(FlesVariable var : variables){
-            if(var.getName().equals(name)){
-                index = variables.indexOf(var);
-            }
-        }
-
-        if(index == -1){
+    private static VariableStack deleteVariable(VariableStack variables, String name) throws Exception{
+        if(!variables.isVariableInStack(name)){
             InterpreterExceptions.throwRuntimeError(String.format("Can't delete variable '%s', because it doesn't exist!", name));
         }
-
-        variables.remove(index);
+        variables.popVariable(name);
         return variables;
     }
 

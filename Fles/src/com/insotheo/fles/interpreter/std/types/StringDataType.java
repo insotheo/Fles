@@ -1,24 +1,20 @@
 package com.insotheo.fles.interpreter.std.types;
 
-import com.insotheo.fles.interpreter.variable.DataType;
+import com.insotheo.fles.interpreter.data.DataType;
+import com.insotheo.fles.interpreter.data.ValueType;
 
 public class StringDataType extends DataType {
 
     public StringDataType() {
-        super("string");
+        super(ValueType.StringLiteral);
+    }
+
+    public static boolean isDataMatch(Object data){
+        return data instanceof String;
     }
 
     @Override
-    public boolean isString() {
-        return true;
-    }
-
-    public static boolean isDataMatch(String data) throws Exception{
-        return true;
-    }
-
-    @Override
-    public String inferValue(String value) throws Exception {
-        return value;
+    public String cast(Object data) throws Exception {
+        return data.toString();
     }
 }

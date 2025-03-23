@@ -51,22 +51,22 @@ public class Lexer {
                 }
 
                 switch (identifier){
-                    case "true": return new Token(TokenType.True, "true");
-                    case "false": return new Token(TokenType.False, "false");
-                    case "let": return new Token(TokenType.Let, "let");
-                    case "fn": return new Token(TokenType.Fn, "fn");
-                    case "return": return new Token(TokenType.Return, "return");
-                    case "delete": return new Token(TokenType.Delete, "delete");
-                    case "global": return new Token(TokenType.GlobalModifier, "global");
+                    case "true": return new Token(TokenType.True, null);
+                    case "false": return new Token(TokenType.False, null);
+                    case "let": return new Token(TokenType.Let, null);
+                    case "fn": return new Token(TokenType.Fn, null);
+                    case "return": return new Token(TokenType.Return, null);
+                    case "delete": return new Token(TokenType.Delete, null);
+                    case "global": return new Token(TokenType.GlobalModifier, null);
                 }
 
                 return new Token(TokenType.Identifier, identifier);
             }
 
             switch (current){
-                case '+': pos++; return new Token(TokenType.Plus, "+");
-                case '-': pos++; return new Token(TokenType.Minus, "-");
-                case '*': pos++; return new Token(TokenType.Asterisk, "*");
+                case '+': pos++; return new Token(TokenType.Plus, null);
+                case '-': pos++; return new Token(TokenType.Minus, null);
+                case '*': pos++; return new Token(TokenType.Asterisk, null);
                 case '/': {
                     pos++;
                     if (content.charAt(pos) == '/') { //comment
@@ -75,79 +75,79 @@ public class Lexer {
                         }
                         continue;
                     } else { //Slash
-                        return new Token(TokenType.Slash, "/");
+                        return new Token(TokenType.Slash, null);
                     }
                 }
-                case '%': pos++; return new Token(TokenType.PercentSign, "%");
+                case '%': pos++; return new Token(TokenType.PercentSign, null);
 
-                case '(': pos++; return new Token(TokenType.LParen, "(");
-                case ')': pos++; return new Token(TokenType.RParen, ")");
-                case '{': pos++; return new Token(TokenType.LBrace, "{");
-                case '}': pos++; return new Token(TokenType.RBrace, "}");
+                case '(': pos++; return new Token(TokenType.LParen, null);
+                case ')': pos++; return new Token(TokenType.RParen, null);
+                case '{': pos++; return new Token(TokenType.LBrace, null);
+                case '}': pos++; return new Token(TokenType.RBrace, null);
                 case '[':{
                     pos++;
                     if(content.charAt(pos) == ']'){
                         pos++;
-                        return new Token(TokenType.ArrayDef, "[]");
+                        return new Token(TokenType.ArrayDef, null); //[]
                     }
-                    return new Token(TokenType.LSquareBracket, "[");
+                    return new Token(TokenType.LSquareBracket, null);
                 }
-                case ']': pos++; return new Token(TokenType.RSquareBracket, "]");
+                case ']': pos++; return new Token(TokenType.RSquareBracket, null);
 
-                case '.': pos++; return new Token(TokenType.Point, ".");
-                case ';': pos++; return new Token(TokenType.Semicolon, ";");
-                case ',': pos++; return new Token(TokenType.Comma, ",");
-                case '@': pos++; return new Token(TokenType.At, "@");
-                case ':': pos++; return new Token(TokenType.Colon, ":");
+                case '.': pos++; return new Token(TokenType.Point, null);
+                case ';': pos++; return new Token(TokenType.Semicolon, null);
+                case ',': pos++; return new Token(TokenType.Comma, null);
+                case '@': pos++; return new Token(TokenType.At, null);
+                case ':': pos++; return new Token(TokenType.Colon, null);
 
                 case '=':{
                     pos++;
                     if(content.charAt(pos) == '='){
                         pos++;
-                        return new Token(TokenType.Equality, "==");
+                        return new Token(TokenType.Equality, null); //==
                     }
-                    return new Token(TokenType.EqualSign, "=");
+                    return new Token(TokenType.EqualSign, null);
                 }
                 case '&':{
                     pos++;
                     if(content.charAt(pos) == '&'){
                         pos++;
-                        return new Token(TokenType.LogicAnd, "&&");
+                        return new Token(TokenType.LogicAnd, null); //&&
                     }
-                    return new Token(TokenType.Ampersand, "&");
+                    return new Token(TokenType.Ampersand, null);
                 }
                 case '|':{
                     pos++;
                     if(content.charAt(pos) == '|'){
                         pos++;
-                        return new Token(TokenType.LogicOr, "||");
+                        return new Token(TokenType.LogicOr, null); //||
                     }
-                    return new Token(TokenType.Pipe, "|");
+                    return new Token(TokenType.Pipe, null);
                 }
-                case '!': pos++; return new Token(TokenType.LogicNot, "!");
+                case '!': pos++; return new Token(TokenType.LogicNot, null); //!
                 case '>':{
                     pos++;
                     if(content.charAt(pos) == '='){
                         pos++;
-                        return new Token(TokenType.MoreOrEqual, ">=");
+                        return new Token(TokenType.MoreOrEqual, null); //>=
                     }
                     else if(content.charAt(pos) == '>'){
                         pos++;
-                        return new Token(TokenType.RightShift, ">>");
+                        return new Token(TokenType.RightShift, null); //>>
                     }
-                    return new Token(TokenType.MoreThan, ">");
+                    return new Token(TokenType.MoreThan, null); //>
                 }
                 case '<': {
                     pos++;
                     if(content.charAt(pos) == '='){
                         pos++;
-                        return new Token(TokenType.LessOrEqual, "<=");
+                        return new Token(TokenType.LessOrEqual, null); //<=
                     }
                     else if(content.charAt(pos) == '<'){
                         pos++;
-                        return new Token(TokenType.LeftShift, "<<");
+                        return new Token(TokenType.LeftShift, null); //<<
                     }
-                    return new Token(TokenType.LessThan, "<");
+                    return new Token(TokenType.LessThan, null); //<
                 }
 
                 case '\'':{
@@ -160,7 +160,7 @@ public class Lexer {
                         }
                         return new Token(TokenType.CharLiteral, literal);
                     }
-                    return new Token(TokenType.SingleQuote, "'");
+                    return new Token(TokenType.SingleQuote, null);
                 }
                 case '"':{
                     pos++;
@@ -183,7 +183,7 @@ public class Lexer {
             pos++;
             return new Token(TokenType.Unknown, String.format("Unknown: '%c'", current));
         }
-        return new Token(TokenType.EOF, "EOF");
+        return new Token(TokenType.EOF, null);
     }
 
     public Vector2D getPosition(){

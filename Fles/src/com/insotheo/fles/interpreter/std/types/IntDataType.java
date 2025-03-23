@@ -1,42 +1,39 @@
 package com.insotheo.fles.interpreter.std.types;
 
 import com.insotheo.fles.interpreter.InterpreterExceptions;
-import com.insotheo.fles.interpreter.variable.DataType;
+import com.insotheo.fles.interpreter.data.DataType;
+import com.insotheo.fles.interpreter.data.ValueType;
 
 public class IntDataType extends DataType {
 
     public IntDataType() {
-        super("int");
+        super(ValueType.Numeric);
     }
 
-    public static boolean isDataMatch(String value) throws Exception {
-        try{
-            int parsedInt = Integer.parseInt(value);
-            return true;
-        }
-        catch (Exception ex){
-            return false;
-        }
+    public static boolean isDataMatch(Object data) {
+        return data instanceof Integer;
     }
 
     @Override
-    public String inferValue(String value) throws Exception {
+    public Integer cast(Object data) throws Exception {
         try{
-            double parsedVal = Double.parseDouble(value);
-            int val = (int)parsedVal;
-            return String.valueOf(val);
-        }
-        catch (Exception ex){
-            if(value == null || value.trim().isEmpty()){
-                return null;
+            if(data instanceof String){
+                if(data.toString().isEmpty()){
+                    return null;
+                }
+                return Integer.parseInt(data.toString());
             }
-            InterpreterExceptions.throwCastFailedError(this.typeName);
-            return null;
+            else if(data instanceof Character){
+                return (int)data.toString().charAt(0);
+            }
+            else if(data instanceof Number){
+                return ((Number)data).intValue();
+            }
+            return (int)data;
+        } catch (Exception e) {
+            InterpreterExceptions.throwCastFailedError("int");
         }
+        return null;
     }
 
-    @Override
-    public boolean isNumericType() {
-        return true;
-    }
 }

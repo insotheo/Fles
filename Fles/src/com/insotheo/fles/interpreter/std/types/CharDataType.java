@@ -1,44 +1,39 @@
 package com.insotheo.fles.interpreter.std.types;
 
 import com.insotheo.fles.interpreter.InterpreterExceptions;
-import com.insotheo.fles.interpreter.variable.DataType;
+import com.insotheo.fles.interpreter.data.DataType;
+import com.insotheo.fles.interpreter.data.ValueType;
 
 public class CharDataType extends DataType {
 
     public CharDataType() {
-        super("char");
+        super(ValueType.CharLiteral);
     }
 
-    public static boolean isDataMatch(String value) throws Exception {
-        return value.length() == 1 || IntDataType.isDataMatch(value);
-    }
-
-    @Override
-    public boolean isChar(){
-        return true;
+    public static boolean isDataMatch(Object data) {
+        return data instanceof Character;
     }
 
     @Override
-    public String inferValue(String value) throws Exception {
-        if(IntDataType.isDataMatch(value)){
-            int code = Integer.parseInt(value);
-            return String.valueOf((char)code);
-        }
-
-        else if(FloatDataType.isDataMatch(value)){
-            try{
-                int code = (int)Double.parseDouble(value);
-                return String.valueOf((char)code);
+    public Character cast(Object data) throws Exception {
+        try{
+            if(data instanceof Number){
+                int val = ((Number)data).intValue();
+                return (char)val;
             }
-            catch (Exception ex){
-                if(value == null || value.trim().isEmpty()){
+            else if(data instanceof String){
+                if(data.toString().isEmpty()){
                     return null;
                 }
-                InterpreterExceptions.throwCastFailedError(this.typeName);
-                return null;
+                return data.toString().charAt(0);
+            }
+            else{
+                return (char)data;
             }
         }
-
-        return String.valueOf(value.charAt(0));
+        catch (Exception ex){
+            InterpreterExceptions.throwCastFailedError("char");
+        }
+        return null;
     }
 }

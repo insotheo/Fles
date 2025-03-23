@@ -1,19 +1,20 @@
 package com.insotheo.fles.interpreter.std.types;
 
-import com.insotheo.fles.interpreter.variable.DataType;
+import com.insotheo.fles.interpreter.data.DataType;
+import com.insotheo.fles.interpreter.data.ValueType;
 
 public class VoidDataType extends DataType {
 
     public VoidDataType() {
-        super("void");
+        super(ValueType.Unknown);
     }
 
-    public static boolean isDataMatch(String value) throws Exception {
+    public static boolean isDataMatch(Object data) {
         return true;
     }
 
     @Override
-    public String inferValue(String value) throws Exception {
-        return "";
+    public Object cast(Object data) throws Exception {
+        return null;
     }
 }

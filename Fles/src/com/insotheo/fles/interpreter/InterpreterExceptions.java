@@ -21,6 +21,14 @@ public class InterpreterExceptions{
         throw new Exception(msg);
     }
 
+    public static void throwVariableIsAlreadyInStack(String name) throws Exception{
+        throw new Exception(String.format("Variable with name '%s' is already in stack!", name));
+    }
+
+    public static void throwFunctionIsAlreadyInStack(String name) throws Exception{
+        throw new Exception(String.format("Function with name '%s' is already in stack!", name));
+    }
+
     public static void throwCastFailedError(String typeName) throws Exception{
         throw new Exception(String.format("Failed to cast to %s", typeName));
     }

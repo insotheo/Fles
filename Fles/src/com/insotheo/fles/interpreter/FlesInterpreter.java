@@ -9,12 +9,11 @@ import com.insotheo.fles.interpreter.std.functions.StdExitFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintlnFunction;
 import com.insotheo.fles.interpreter.std.types.*;
-import com.insotheo.fles.interpreter.variable.FlesValue;
-import com.insotheo.fles.interpreter.variable.FlesVariable;
+import com.insotheo.fles.interpreter.data.FlesValue;
+import com.insotheo.fles.interpreter.data.FlesVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class FlesInterpreter {
 
@@ -22,41 +21,41 @@ public class FlesInterpreter {
         //adding std
 
         //types
-        InterpreterData.defineNewType(new VoidDataType());
-        InterpreterData.defineNewType(new IntDataType());
-        InterpreterData.defineNewType(new FloatDataType());
-        InterpreterData.defineNewType(new CharDataType());
-        InterpreterData.defineNewType(new StringDataType());
+        InterpreterData.defineNewType("void", new VoidDataType());
+        InterpreterData.defineNewType("int", new IntDataType());
+        InterpreterData.defineNewType("float", new FloatDataType());
+        InterpreterData.defineNewType("char", new CharDataType());
+        InterpreterData.defineNewType("string", new StringDataType());
 
         //functions
-        InterpreterData.addFunction(new StdPrintFunction());
-        InterpreterData.addFunction(new StdPrintlnFunction());
-        InterpreterData.addFunction(new StdExitFunction());
+        InterpreterData.addFunction("std_print", new StdPrintFunction());
+        InterpreterData.addFunction("std_println", new StdPrintlnFunction());
+        InterpreterData.addFunction("std_exit", new StdExitFunction());
 
         //....
 
-        for (ASTNode node : nodes) { //parsing function, structs, enums
+        for (ASTNode node : nodes) { //parsing functions, structs, enums
             if (node.getClass() == FunctionNode.class) {
                 FunctionNode func = ((FunctionNode) node);
-                InterpreterData.addFunction(new FlesFunction(func.getName(), func.getBody().getStatements(), func.getParameters(), func.getReturnType()));
+                InterpreterData.addFunction(func.getName(), new FlesFunction(func.getBody().getStatements(), func.getParameters(), func.getReturnType()));
             }
         }
 
         for(ASTNode node : nodes){//parsing global variables
             if(node.getClass() == VariableNode.class){
                 VariableNode varNode = ((VariableNode) node);
-                FlesVariable newVariable = new FlesVariable(varNode.getType(), varNode.getName());
-                InterpreterData.addGlobalVariable(newVariable);
+                FlesVariable newVariable = new FlesVariable(varNode.getType());
+                InterpreterData.addGlobalVariable(varNode.getName(), newVariable);
             }
 
             else if(node.getClass() == AssignmentNode.class){
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
                 if(assignmentNode.getIsJustCreated()){
                     VariableNode newVarNode = assignmentNode.getVariable();
-                    FlesVariable newVar = new FlesVariable(newVarNode.getType(), newVarNode.getName());
+                    FlesVariable newVar = new FlesVariable(newVarNode.getType());
                     FlesValue newVarValue = FlesEvaluate.evalExpression(assignmentNode.getValue(), InterpreterData.globalVariables);
                     newVar.setData(newVarValue.getData());
-                    InterpreterData.addGlobalVariable(newVar);
+                    InterpreterData.addGlobalVariable(newVarNode.getName(), newVar);
                 }
                 else{
                     InterpreterExceptions.throwRuntimeError("Can't do assignment out of the function!");
@@ -68,12 +67,9 @@ public class FlesInterpreter {
     }
 
     public void callMain() throws Exception{
-        for(FlesFunction func : InterpreterData.functions){
-            if(Objects.equals(func.getName(), "main")){
-                func.call(new ArrayList<>());
-                return;
-            }
+        if(!InterpreterData.isFunctionExist("main")){
+            InterpreterExceptions.throwMainFunctionNotFound();
         }
-        InterpreterExceptions.throwMainFunctionNotFound();
+        InterpreterData.callFunction("main", new ArrayList<>());
     }
 }

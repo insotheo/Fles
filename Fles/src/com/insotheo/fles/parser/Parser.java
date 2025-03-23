@@ -11,7 +11,7 @@ import com.insotheo.fles.lexer.TokenType;
 public class Parser {
     private final Lexer lexer;
     private Token currentToken;
-    private List<ASTNode> nodes;
+    private final List<ASTNode> nodes;
 
     public Parser(Lexer fileLexer) throws Exception{
         lexer = fileLexer;
@@ -210,10 +210,10 @@ public class Parser {
         ASTNode left = parseFactor();
 
         while(currentToken != null && (currentToken.type == TokenType.Asterisk || currentToken.type == TokenType.Slash)){
-            String operator = currentToken.value;
+            OperationValue operator = currentToken.type == TokenType.Asterisk ? OperationValue.Multiplication : OperationValue.Division;
             eatFatal(currentToken.type);
             ASTNode right = parseFactor();
-            left = new BinaryOperationNode(left, operator.equals("*") ? OperationValue.Multiplication : OperationValue.Division, right);
+            left = new BinaryOperationNode(left, operator, right);
         }
 
         return left;
@@ -223,10 +223,10 @@ public class Parser {
         ASTNode left = parseTerm();
 
         while(currentToken != null && (currentToken.type == TokenType.Plus || currentToken.type == TokenType.Minus)){
-            String operator = currentToken.value;
+            OperationValue operator = currentToken.type == TokenType.Plus ? OperationValue.Addition : OperationValue.Subtraction;
             eatFatal(currentToken.type);
             ASTNode right = parseTerm();
-            left = new BinaryOperationNode(left, operator.equals("+") ? OperationValue.Addition : OperationValue.Subtraction, right);
+            left = new BinaryOperationNode(left, operator, right);
         }
 
         return left;

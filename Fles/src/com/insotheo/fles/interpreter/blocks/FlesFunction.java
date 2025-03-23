@@ -5,62 +5,57 @@ import com.insotheo.fles.ast.ParameterNode;
 import com.insotheo.fles.interpreter.FlesEvaluate;
 import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
-import com.insotheo.fles.interpreter.variable.BlockReturn;
-import com.insotheo.fles.interpreter.variable.FlesValue;
-import com.insotheo.fles.interpreter.variable.FlesVariable;
+import com.insotheo.fles.interpreter.data.BlockReturn;
+import com.insotheo.fles.interpreter.data.FlesValue;
+import com.insotheo.fles.interpreter.data.FlesVariable;
+import com.insotheo.fles.interpreter.data.VariableStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FlesFunction extends InterpreterBlock {
-    protected List<FlesVariable> parameters;
-    protected String returnType;
+    protected VariableStack parameters;
+    protected String returnTypeName;
 
-    protected FlesFunction(){}
+    protected FlesFunction() {}
 
-    public FlesFunction(String name, List<ASTNode> statements, List<ParameterNode> parameters, String returnType) throws Exception{
-        this.name = name;
+    public FlesFunction(List<ASTNode> statements, List<ParameterNode> parameters, String returnTypeName) throws Exception{
         this.statements = statements;
-        this.parameters = new ArrayList<>();
-        if(!InterpreterData.isTypeDefined(returnType)){
-            InterpreterExceptions.throwUnknownDataType(returnType);
+        this.parameters = new VariableStack();
+
+        if(!InterpreterData.isTypeDefined(returnTypeName)){
+            InterpreterExceptions.throwUnknownDataType(returnTypeName);
         }
-        this.returnType = returnType;
+        this.returnTypeName = returnTypeName;
+
         for(ParameterNode node : parameters){
-            this.parameters.add(new FlesVariable(
-                    node.getType(),
-                    node.getName(),
-                    ""
-            ));
+            if(!InterpreterData.isTypeDefined(node.getType())){
+                InterpreterExceptions.throwUnknownDataType(returnTypeName);
+            }
+            this.parameters.pushVariable(node.getName(), new FlesVariable(node.getType()));
         }
     }
 
-    public BlockReturn call(List<FlesValue> arguments) throws Exception{
+    public BlockReturn call(String functionName, List<FlesValue> arguments) throws Exception{
         if(arguments.size() != parameters.size()){
-            InterpreterExceptions.throwRuntimeError(String.format("For function %s amount of gotten arguments is not equal to amount of parameters amount!", this.getName()));
+            InterpreterExceptions.throwRuntimeError(String.format("For function '%s' amount of gotten arguments doesn't match to amount of parameters amount!", functionName));
         }
-        for(int i = 0; i < parameters.size(); i++){
-            parameters.get(i).setValue(arguments.get(i).getData());
-        }
+        parameters.setVariablesValues(arguments);
 
         BlockReturn returnValue = FlesEvaluate.evalFunction(this);
 
         clearParametersValues();
-
         return returnValue;
     }
 
-    public List<FlesVariable> getParameters() {
+    public VariableStack getParameters() {
         return parameters;
     }
 
-    public String getReturnType() {
-        return returnType;
+    public String getReturnTypeName() {
+        return returnTypeName;
     }
 
     public void clearParametersValues() throws Exception{
-        for(FlesVariable param : parameters){
-            param.setValue("");
-        }
+        parameters.clearStackValues();
     }
 }

@@ -1,24 +1,6 @@
-let counter : int = 0;
-
-fn increase() : int{
-    counter = counter + 1;
-}
-
-fn decrease(){
-    counter = counter - 1;
-}
-
-fn main(){
-    increase();
-    increase();
-    increase();
-    decrease();
-    increase();
-    increase();
-    increase();
-    increase();
-    increase();
-    std_println(counter);
-    delete global counter;
-    increase(); //error! counter not found!
+fn main() : void{
+    let word : string = "Hello";
+    let colon : char = ',';
+    let c : char = 33.9899;
+    std_println(word + colon + " World" + c);
 }
