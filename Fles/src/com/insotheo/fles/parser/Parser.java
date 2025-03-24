@@ -166,6 +166,12 @@ public class Parser {
             return number;
         }
 
+        if(currentToken.type == TokenType.True || currentToken.type == TokenType.False){
+            BooleanNode bool = new BooleanNode(currentToken.type == TokenType.True);
+            eatFatal(currentToken.type);
+            return bool;
+        }
+
         else if(currentToken.type == TokenType.StringLiteral){
             StringLiteralNode string = new StringLiteralNode(currentToken.value);
             eatFatal(TokenType.StringLiteral);
@@ -219,11 +225,34 @@ public class Parser {
         return left;
     }
 
-    private ASTNode parseExpression() throws Exception{ //for + or -
+    private ASTNode parseExpression() throws Exception{ //for + or -, or logic
         ASTNode left = parseTerm();
 
-        while(currentToken != null && (currentToken.type == TokenType.Plus || currentToken.type == TokenType.Minus)){
-            OperationValue operator = currentToken.type == TokenType.Plus ? OperationValue.Addition : OperationValue.Subtraction;
+        while(currentToken != null &&
+                (currentToken.type == TokenType.Plus ||
+                        currentToken.type == TokenType.Minus ||
+                        currentToken.type == TokenType.MoreThan ||
+                        currentToken.type == TokenType.LessThan ||
+                        currentToken.type == TokenType.MoreOrEqual ||
+                        currentToken.type == TokenType.LessOrEqual ||
+                        currentToken.type == TokenType.Equality ||
+                        currentToken.type == TokenType.LogicAnd ||
+                        currentToken.type == TokenType.LogicOr ||
+                        currentToken.type == TokenType.NotEqual
+                        )){
+            OperationValue operator = switch (currentToken.type) {
+                case TokenType.Plus -> OperationValue.Addition;
+                case TokenType.Minus -> OperationValue.Subtraction;
+                case TokenType.MoreThan -> OperationValue.GreaterThan;
+                case TokenType.LessThan -> OperationValue.LessThan;
+                case TokenType.MoreOrEqual -> OperationValue.GreaterOrEqualThan;
+                case TokenType.LessOrEqual -> OperationValue.LessOrEqualThan;
+                case TokenType.Equality -> OperationValue.Equal;
+                case TokenType.NotEqual -> OperationValue.NotEqual;
+                case TokenType.LogicAnd -> OperationValue.LogicalAnd;
+                case TokenType.LogicOr -> OperationValue.LogicalOr;
+                default -> OperationValue.Unknown;
+            };
             eatFatal(currentToken.type);
             ASTNode right = parseTerm();
             left = new BinaryOperationNode(left, operator, right);

@@ -124,7 +124,15 @@ public class Lexer {
                     }
                     return new Token(TokenType.Pipe, null);
                 }
-                case '!': pos++; return new Token(TokenType.LogicNot, null); //!
+                case '!': {
+                    pos++;
+                    if(content.charAt(pos) == '='){
+                        pos++;
+                        return new Token(TokenType.NotEqual, null);
+                    }
+                    return new Token(TokenType.LogicNot, null);
+                } //!
+
                 case '>':{
                     pos++;
                     if(content.charAt(pos) == '='){

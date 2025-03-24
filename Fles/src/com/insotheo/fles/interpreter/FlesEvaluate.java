@@ -20,6 +20,9 @@ public class FlesEvaluate {
         else if(node.getClass() == CharLiteral.class){
             return new FlesValue(ValueType.CharLiteral, ((CharLiteral) node).getValue());
         }
+        else if(node.getClass() == BooleanNode.class){
+            return new FlesValue(ValueType.Boolean, ((BooleanNode) node).getValue());
+        }
 
         else if(node.getClass() == FunctionCallNode.class){
             FunctionCallNode funcCallNode = ((FunctionCallNode) node);
@@ -80,6 +83,30 @@ public class FlesEvaluate {
                 case Division:
                     left.divide(right);
                     return left;
+
+                case Equal:
+                    return left.equal(right);
+
+                case NotEqual:
+                    return left.notEqual(right);
+
+                case GreaterThan:
+                    return left.greaterLessThan(right, true);
+
+                case LessThan:
+                    return left.greaterLessThan(right, false);
+
+                case GreaterOrEqualThan:
+                    return left.greaterLessOrEqual(right, true);
+
+                case LessOrEqualThan:
+                    return left.greaterLessOrEqual(right, false);
+
+                case LogicalOr:
+                    return left.or(right);
+
+                case LogicalAnd:
+                    return left.and(right);
 
                 default: InterpreterExceptions.throwRuntimeError("Unknown operation!");
             }
@@ -150,6 +177,10 @@ public class FlesEvaluate {
                         InterpreterData.deleteGlobalVariable(delNode.getName());
                         break;
                 }
+            }
+
+            else if(node.getClass() == BlockNode.class){
+                evalBlock(((BlockNode) node).getStatements(), variables);
             }
         }
 

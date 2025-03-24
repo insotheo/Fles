@@ -26,6 +26,7 @@ public class FlesInterpreter {
         InterpreterData.defineNewType("float", new FloatDataType());
         InterpreterData.defineNewType("char", new CharDataType());
         InterpreterData.defineNewType("string", new StringDataType());
+        InterpreterData.defineNewType("bool", new BoolDataType());
 
         //functions
         InterpreterData.addFunction("std_print", new StdPrintFunction());

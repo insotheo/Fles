@@ -1,5 +1,7 @@
 package com.insotheo.fles.parser;
 
 public enum OperationValue {
-    Addition, Subtraction, Multiplication, Division
+    Unknown,
+    Addition, Subtraction, Multiplication, Division,
+    Equal, NotEqual, GreaterThan, LessThan, GreaterOrEqualThan, LessOrEqualThan, LogicalAnd, LogicalOr,
 }

@@ -4,7 +4,7 @@ public enum TokenType {
     Plus, Minus, Asterisk, Slash, EqualSign, PercentSign, Point, At, Colon,
     Semicolon, Comma, SingleQuote, Ampersand, Pipe,
 
-    LessThan, MoreThan, LessOrEqual, MoreOrEqual, LogicOr, LogicAnd, Equality, LogicNot,
+    LessThan, MoreThan, LessOrEqual, MoreOrEqual, LogicOr, LogicAnd, Equality, LogicNot, NotEqual,
     LeftShift, RightShift,
 
     True, False,

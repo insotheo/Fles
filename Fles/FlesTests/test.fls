@@ -1,6 +1,4 @@
 fn main() : void{
-    let word : string = "Hello";
-    let colon : char = ',';
-    let c : char = 33.9899;
-    std_println(word + colon + " World" + c);
+    let a : bool = (100 >= 1) || (1 < 2);
+    std_println((a && false) == false);
 }
