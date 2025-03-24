@@ -1,8 +1,8 @@
 package com.insotheo.fles.lexer;
 
 public class TokenTypeDecoder {
-    public static String tokenTypeToString(TokenType type){
-        return switch (type){
+    public static String tokenTypeToString(TokenType type) {
+        return switch (type) {
             case TokenType.PercentSign -> "'%'";
             case TokenType.EqualSign -> "'='";
             case TokenType.At -> "'@'";

@@ -15,14 +15,13 @@ public class BoolDataType extends DataType {
 
     @Override
     public Boolean cast(Object data) throws Exception {
-        try{
-            if(data instanceof Number){
-                return ((Number)data).intValue() != 0;
-            }
-            else if(data instanceof String && data.toString().isEmpty()){
+        try {
+            if (data instanceof Number) {
+                return ((Number) data).intValue() != 0;
+            } else if (data instanceof String && data.toString().isEmpty()) {
                 return false;
             }
-            return (boolean)data;
+            return (boolean) data;
         } catch (Exception e) {
             InterpreterExceptions.throwCastFailedError("bool");
         }

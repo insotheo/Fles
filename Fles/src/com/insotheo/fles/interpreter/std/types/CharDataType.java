@@ -16,22 +16,19 @@ public class CharDataType extends DataType {
 
     @Override
     public Character cast(Object data) throws Exception {
-        try{
-            if(data instanceof Number){
-                int val = ((Number)data).intValue();
-                return (char)val;
-            }
-            else if(data instanceof String){
-                if(data.toString().isEmpty()){
+        try {
+            if (data instanceof Number) {
+                int val = ((Number) data).intValue();
+                return (char) val;
+            } else if (data instanceof String) {
+                if (data.toString().isEmpty()) {
                     return null;
                 }
                 return data.toString().charAt(0);
+            } else {
+                return (char) data;
             }
-            else{
-                return (char)data;
-            }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             InterpreterExceptions.throwCastFailedError("char");
         }
         return null;

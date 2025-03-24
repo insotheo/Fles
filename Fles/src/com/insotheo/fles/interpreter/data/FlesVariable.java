@@ -7,16 +7,16 @@ public class FlesVariable {
     private final String typeName;
     private FlesValue value;
 
-    public FlesVariable(String type, FlesValue value) throws Exception{
-        if(type.equals("auto")){
+    public FlesVariable(String type, FlesValue value) throws Exception {
+        if (type.equals("auto")) {
             type = InterpreterData.findAutoType(value);
         }
         this.typeName = type;
         setValue(value);
     }
 
-    public FlesVariable(String type) throws Exception{
-        if(type.equals("auto")){
+    public FlesVariable(String type) throws Exception {
+        if (type.equals("auto")) {
             InterpreterExceptions.throwRuntimeError("Can't find a type instead of auto if the value is null!");
         }
         this.typeName = type;
@@ -35,7 +35,7 @@ public class FlesVariable {
         this.value = value;
     }
 
-    public void setData(Object data) throws Exception{
+    public void setData(Object data) throws Exception {
         this.value = new FlesValue(getTypeName(), data);
     }
 

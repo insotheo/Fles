@@ -16,20 +16,18 @@ public class IntDataType extends DataType {
 
     @Override
     public Integer cast(Object data) throws Exception {
-        try{
-            if(data instanceof String){
-                if(data.toString().isEmpty()){
+        try {
+            if (data instanceof String) {
+                if (data.toString().isEmpty()) {
                     return null;
                 }
                 return Integer.parseInt(data.toString());
+            } else if (data instanceof Character) {
+                return (int) data.toString().charAt(0);
+            } else if (data instanceof Number) {
+                return ((Number) data).intValue();
             }
-            else if(data instanceof Character){
-                return (int)data.toString().charAt(0);
-            }
-            else if(data instanceof Number){
-                return ((Number)data).intValue();
-            }
-            return (int)data;
+            return (int) data;
         } catch (Exception e) {
             InterpreterExceptions.throwCastFailedError("int");
         }

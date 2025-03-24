@@ -3,17 +3,16 @@ import com.insotheo.fles.SourceFile;
 import java.util.Scanner;
 
 public class Program {
-    public static void main(String[] args){
-        try{
-            if(args.length == 0){
+    public static void main(String[] args) {
+        try {
+            if (args.length == 0) {
                 System.out.println("Welcome to Fles!");
-                return;
-            }
-
-            else if(args.length == 1){
+            } else if (args.length == 1) {
                 String command = args[0];
-                switch (command){
-                    case "--version": System.out.println("Fles version: 0.0.0.1"); break;
+                switch (command) {
+                    case "--version":
+                        System.out.println("Fles version: 0.0.0.1");
+                        break;
 
                     case "help":
                     case "h":
@@ -30,81 +29,77 @@ public class Program {
                                 """);
                         break;
 
-                    case "run": run(args, false); break;
-                    case "run_clear": run(args, true); break;
-                    case "parse": parse(args); break;
+                    case "run":
+                        run(args, false);
+                        break;
+                    case "run_clear":
+                        run(args, true);
+                        break;
+                    case "parse":
+                        parse(args);
+                        break;
 
-                    default: throw new Exception("Unknown command!");
+                    default:
+                        throw new Exception("Unknown command!");
                 }
-            }
-
-            else{
+            } else {
                 String command = args[0];
 
-                if(command.equals("run")){
+                if (command.equals("run")) {
                     run(args, false);
-                }
-                else if(command.equals("run_clear")){
+                } else if (command.equals("run_clear")) {
                     run(args, true);
-                }
-
-                else if(command.equals("parse")){
+                } else if (command.equals("parse")) {
                     parse(args);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
 
-    private static void run(String[] args, boolean isClear) throws Exception{
+    private static void run(String[] args, boolean isClear) throws Exception {
         String filePathLine = "";
 
-        if(args.length < 2){
+        if (args.length < 2) {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Please, enter the path to the *.fls file with the main function: ");
             filePathLine = scanner.nextLine();
             scanner.close();
-        }
-
-        else if(args.length == 2){
+        } else if (args.length == 2) {
             filePathLine = args[1];
         }
 
         SourceFile mainSource = new SourceFile(filePathLine);
 
-        if(mainSource.isParsingSuccess()) {
+        if (mainSource.isParsingSuccess()) {
             if (!isClear) {
                 System.out.println();
-                System.out.println(String.format("==========FLES(%s)==========", mainSource.getFileName()));
+                System.out.printf("==========FLES(%s)==========%n", mainSource.getFileName());
             }
 
             mainSource.run();
         }
     }
 
-    private static void parse(String[] args) throws Exception{
+    private static void parse(String[] args) throws Exception {
         String filePathLine = "";
 
-        if(args.length < 2){
+        if (args.length < 2) {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Please, enter the path to the *.fls file with the main function: ");
             filePathLine = scanner.nextLine();
             scanner.close();
-        }
-
-        else if(args.length == 2){
+        } else if (args.length == 2) {
             filePathLine = args[1];
         }
 
         SourceFile mainSource = new SourceFile(filePathLine);
 
-        if(mainSource.isParsingSuccess()){
-            System.out.println(String.format("\u001B[32m" + "Fles message(about %s): Success!" + "\u001B[0m", mainSource.getFileName()));
-        }
-        else{
-            System.err.println(String.format("Fles message(about %s): Failed!", mainSource.getFileName()));
+        if (mainSource.isParsingSuccess()) {
+            System.out.printf("\u001B[32m" + "Fles message(about %s): Success!" + "\u001B[0m%n", mainSource.getFileName());
+        } else {
+            System.err.printf("Fles message(about %s): Failed!%n", mainSource.getFileName());
         }
     }
 }

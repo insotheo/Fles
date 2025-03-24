@@ -5,13 +5,13 @@ public class AssignmentNode implements ASTNode {
     private final ASTNode value;
     private final boolean isJustCreated;
 
-    public AssignmentNode(VariableNode var, ASTNode val, boolean justCreated){
+    public AssignmentNode(VariableNode var, ASTNode val, boolean justCreated) {
         varNode = var;
         value = val;
         isJustCreated = justCreated;
     }
 
-    public VariableNode getVariable(){
+    public VariableNode getVariable() {
         return varNode;
     }
 
@@ -19,7 +19,7 @@ public class AssignmentNode implements ASTNode {
         return value;
     }
 
-    public boolean getIsJustCreated(){
+    public boolean getIsJustCreated() {
         return isJustCreated;
     }
 }

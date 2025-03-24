@@ -12,7 +12,7 @@ import java.util.List;
 
 public class StdPrintlnFunction extends FlesFunction {
 
-    public StdPrintlnFunction() throws Exception{
+    public StdPrintlnFunction() throws Exception {
         VariableStack params = new VariableStack();
         params.pushVariable("value", new FlesVariable("void"));
         this.statements = new ArrayList<>();
@@ -22,11 +22,10 @@ public class StdPrintlnFunction extends FlesFunction {
 
     @Override
     public BlockReturn call(String name, List<FlesValue> arguments) throws Exception {
-        if(arguments.isEmpty()){
+        if (arguments.isEmpty()) {
             System.out.println();
             return null;
-        }
-        else if(arguments.size() != 1){
+        } else if (arguments.size() != 1) {
             InterpreterExceptions.throwRuntimeError("std_println function takes only 1 or zero arguments!");
         }
 

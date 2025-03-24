@@ -5,19 +5,19 @@ import com.insotheo.fles.ast.AssignmentNode;
 import com.insotheo.fles.ast.FunctionNode;
 import com.insotheo.fles.ast.VariableNode;
 import com.insotheo.fles.interpreter.blocks.FlesFunction;
+import com.insotheo.fles.interpreter.data.FlesValue;
+import com.insotheo.fles.interpreter.data.FlesVariable;
 import com.insotheo.fles.interpreter.std.functions.StdExitFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintFunction;
 import com.insotheo.fles.interpreter.std.functions.StdPrintlnFunction;
 import com.insotheo.fles.interpreter.std.types.*;
-import com.insotheo.fles.interpreter.data.FlesValue;
-import com.insotheo.fles.interpreter.data.FlesVariable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlesInterpreter {
 
-    public FlesInterpreter(List<ASTNode> nodes) throws Exception{
+    public FlesInterpreter(List<ASTNode> nodes) throws Exception {
         //adding std
 
         //types
@@ -42,23 +42,20 @@ public class FlesInterpreter {
             }
         }
 
-        for(ASTNode node : nodes){//parsing global variables
-            if(node.getClass() == VariableNode.class){
+        for (ASTNode node : nodes) {//parsing global variables
+            if (node.getClass() == VariableNode.class) {
                 VariableNode varNode = ((VariableNode) node);
                 FlesVariable newVariable = new FlesVariable(varNode.getType());
                 InterpreterData.addGlobalVariable(varNode.getName(), newVariable);
-            }
-
-            else if(node.getClass() == AssignmentNode.class){
+            } else if (node.getClass() == AssignmentNode.class) {
                 AssignmentNode assignmentNode = ((AssignmentNode) node);
-                if(assignmentNode.getIsJustCreated()){
+                if (assignmentNode.getIsJustCreated()) {
                     VariableNode newVarNode = assignmentNode.getVariable();
                     FlesVariable newVar = new FlesVariable(newVarNode.getType());
                     FlesValue newVarValue = FlesEvaluate.evalExpression(assignmentNode.getValue(), InterpreterData.globalVariables);
                     newVar.setData(newVarValue.getData());
                     InterpreterData.addGlobalVariable(newVarNode.getName(), newVar);
-                }
-                else{
+                } else {
                     InterpreterExceptions.throwRuntimeError("Can't do assignment out of the function!");
                 }
             }
@@ -67,8 +64,8 @@ public class FlesInterpreter {
 
     }
 
-    public void callMain() throws Exception{
-        if(!InterpreterData.isFunctionExist("main")){
+    public void callMain() throws Exception {
+        if (!InterpreterData.isFunctionExist("main")) {
             InterpreterExceptions.throwMainFunctionNotFound();
         }
         InterpreterData.callFunction("main", new ArrayList<>());

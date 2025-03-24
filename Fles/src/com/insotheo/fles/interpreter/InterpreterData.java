@@ -22,7 +22,7 @@ public class InterpreterData {
         functions.pushFunction(name, function);
     }
 
-    public static boolean isFunctionExist(String name){
+    public static boolean isFunctionExist(String name) {
         return functions.isFunctionInStack(name);
     }
 
@@ -52,7 +52,8 @@ public class InterpreterData {
 
     public static String findAutoType(FlesValue value) throws Exception {
         for (String typeName : dataTypes.keySet()) {
-            if (dataTypes.get(typeName).isDataMatch(value.getData())) {
+            dataTypes.get(typeName);
+            if (DataType.isDataMatch(value.getData())) {
                 return typeName;
             }
         }

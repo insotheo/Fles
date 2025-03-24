@@ -16,20 +16,18 @@ public class FloatDataType extends DataType {
 
     @Override
     public Double cast(Object data) throws Exception {
-        try{
-            if(data instanceof String){
-                if(data.toString().isEmpty()){
+        try {
+            if (data instanceof String) {
+                if (data.toString().isEmpty()) {
                     return null;
                 }
                 return Double.parseDouble(data.toString());
+            } else if (data instanceof Character) {
+                return (double) (int) data.toString().charAt(0);
+            } else if (data instanceof Number) {
+                return ((Number) data).doubleValue();
             }
-            else if(data instanceof Character){
-                return (double)(int)data.toString().charAt(0);
-            }
-            else if(data instanceof Number){
-                return ((Number)data).doubleValue();
-            }
-            return (double)data;
+            return (double) data;
         } catch (Exception e) {
             InterpreterExceptions.throwCastFailedError("float");
         }

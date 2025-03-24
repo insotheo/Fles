@@ -2,11 +2,11 @@ package com.insotheo.fles.ast;
 
 import java.util.List;
 
-public class FunctionCallNode implements ASTNode{
+public class FunctionCallNode implements ASTNode {
     private final String name;
     private final List<ASTNode> arguments;
 
-    public FunctionCallNode(String name, List<ASTNode> arguments){
+    public FunctionCallNode(String name, List<ASTNode> arguments) {
         this.name = name;
         this.arguments = arguments;
     }

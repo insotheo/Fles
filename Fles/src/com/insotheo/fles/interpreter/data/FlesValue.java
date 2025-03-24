@@ -4,8 +4,8 @@ import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
 
 public class FlesValue {
-    private Object data;
     private final ValueType type;
+    private Object data;
 
     public FlesValue(String typeName, Object data) throws Exception {
         this.type = InterpreterData.getDataType(typeName).getDataValueType();
@@ -36,12 +36,12 @@ public class FlesValue {
                 double result = ((Number) getData()).doubleValue() + ((Number) v.getData()).doubleValue();
                 setData(result);
             } else if (getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral) {
-                double result = (double) getData() + (int)v.getData().toString().charAt(0);
+                double result = (double) getData() + (int) v.getData().toString().charAt(0);
                 setData(result);
             } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric) {
                 char result = (char) ((int) getData().toString().charAt(0) + (int) (double) v.getData());
                 setData(result);
-            } else if(getType() == ValueType.StringLiteral && v.getType() != null){
+            } else if (getType() == ValueType.StringLiteral && v.getType() != null) {
                 String result = getData().toString() + v.getData().toString();
                 setData(result);
             }
@@ -57,7 +57,7 @@ public class FlesValue {
                 double result = ((Number) getData()).doubleValue() - ((Number) v.getData()).doubleValue();
                 setData(result);
             } else if (getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral) {
-                double result = (double) getData() - (int)v.getData().toString().charAt(0);
+                double result = (double) getData() - (int) v.getData().toString().charAt(0);
                 setData(result);
             } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric) {
                 char result = (char) ((int) getData().toString().charAt(0) - (int) (double) v.getData());
@@ -95,64 +95,55 @@ public class FlesValue {
     }
 
     public FlesValue equal(FlesValue v) throws Exception {
-        if(getType() == ValueType.Numeric && v.getType() == ValueType.Numeric){
+        if (getType() == ValueType.Numeric && v.getType() == ValueType.Numeric) {
             return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() == ((Number) v.getData()).doubleValue());
-        }
-        else if(getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral){
-            return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() == (double)(int)(char)v.getData());
-        }
-        else if(getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric){
-            return new FlesValue(ValueType.Boolean, (double)(int)(char)getData() == ((Number) v.getData()).doubleValue());
-        }
-        else if(getType() == ValueType.StringLiteral && v.getType() == ValueType.StringLiteral){
+        } else if (getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral) {
+            return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() == (double) (int) (char) v.getData());
+        } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric) {
+            return new FlesValue(ValueType.Boolean, (double) (int) (char) getData() == ((Number) v.getData()).doubleValue());
+        } else if (getType() == ValueType.StringLiteral && v.getType() == ValueType.StringLiteral) {
             return new FlesValue(ValueType.Boolean, getData().toString().equals(v.getData().toString()));
-        }
-        else if(getType() == ValueType.CharLiteral && v.getType() == ValueType.CharLiteral){
-            return new FlesValue(ValueType.Boolean, (char)getData() == (char)(v.getData()));
-        }
-        else if(getType() == ValueType.Boolean && v.getType() == ValueType.Boolean){
-            return new FlesValue(ValueType.Boolean, (boolean)getData() == (boolean)(v.getData()));
-        }
-        else{
+        } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.CharLiteral) {
+            return new FlesValue(ValueType.Boolean, (char) getData() == (char) (v.getData()));
+        } else if (getType() == ValueType.Boolean && v.getType() == ValueType.Boolean) {
+            return new FlesValue(ValueType.Boolean, (boolean) getData() == (boolean) (v.getData()));
+        } else {
             try {
                 return new FlesValue(ValueType.Boolean, getData().equals(v.getData()));
-            }catch(Exception e){
+            } catch (Exception e) {
                 InterpreterExceptions.throwRuntimeError(String.format("Can't do comparing with '%s' and '%s'", getType(), v.getType()));
                 return null;
             }
         }
     }
 
-    public FlesValue notEqual(FlesValue v) throws Exception{
+    public FlesValue notEqual(FlesValue v) throws Exception {
         FlesValue equalResult = equal(v);
-        if(!(equalResult.getData() instanceof Boolean)){
+        if (!(equalResult.getData() instanceof Boolean)) {
             InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
         }
-        boolean value = (boolean)equalResult.getData();
+        boolean value = equalResult.getData();
         return new FlesValue(ValueType.Boolean, !value);
     }
 
-    public FlesValue greaterLessThan(FlesValue v, boolean greater) throws Exception{ //greater is true: >; greater is false: <
-        if(getType() == ValueType.Numeric && v.getType() == ValueType.Numeric){
-            if(greater) {
+    public FlesValue greaterLessThan(FlesValue v, boolean greater) throws Exception { //greater is true: >; greater is false: <
+        if (getType() == ValueType.Numeric && v.getType() == ValueType.Numeric) {
+            if (greater) {
                 return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() > ((Number) v.getData()).doubleValue());
             }
             return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() < ((Number) v.getData()).doubleValue());
-        }
-        else if(getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral){
-            if(greater) {
+        } else if (getType() == ValueType.Numeric && v.getType() == ValueType.CharLiteral) {
+            if (greater) {
                 return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() > (double) (int) (char) (v.getData()));
             }
             return new FlesValue(ValueType.Boolean, ((Number) getData()).doubleValue() < (double) (int) (char) (v.getData()));
-        }
-        else if(getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric){
-            if(greater) {
+        } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.Numeric) {
+            if (greater) {
                 return new FlesValue(ValueType.Boolean, (double) (int) (char) (getData()) > ((Number) getData()).doubleValue());
             }
             return new FlesValue(ValueType.Boolean, (double) (int) (char) (getData()) < ((Number) getData()).doubleValue());
-        }
-        else if(getType() == ValueType.CharLiteral && v.getType() == ValueType.CharLiteral){
-            if(greater) {
+        } else if (getType() == ValueType.CharLiteral && v.getType() == ValueType.CharLiteral) {
+            if (greater) {
                 return new FlesValue(ValueType.Boolean, (int) (char) (getData()) > (int) (char) (v.getData()));
             }
             return new FlesValue(ValueType.Boolean, (int) (char) (getData()) < (int) (char) (v.getData()));
@@ -161,35 +152,35 @@ public class FlesValue {
         return null;
     }
 
-    public FlesValue greaterLessOrEqual(FlesValue v, boolean greater) throws Exception{
+    public FlesValue greaterLessOrEqual(FlesValue v, boolean greater) throws Exception {
         FlesValue greaterResult = greaterLessThan(v, greater);
         FlesValue equalResult = equal(v);
-        if(!(greaterResult.getData() instanceof Boolean || equalResult.getData() instanceof Boolean)){
+        if (!(greaterResult.getData() instanceof Boolean || equalResult.getData() instanceof Boolean)) {
             InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
         }
-        return new FlesValue(ValueType.Boolean,(boolean)greaterResult.getData() || (boolean)equalResult.getData());
+        return new FlesValue(ValueType.Boolean, (boolean) greaterResult.getData() || (boolean) equalResult.getData());
     }
 
-    public FlesValue and(FlesValue v) throws Exception{
-        if(!(getData() instanceof Boolean || v.getData() instanceof Boolean)){
+    public FlesValue and(FlesValue v) throws Exception {
+        if (!(getData() instanceof Boolean || v.getData() instanceof Boolean)) {
             InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
         }
-        boolean self = (boolean)getData();
-        boolean vBool = (boolean)v.getData();
+        boolean self = getData();
+        boolean vBool = v.getData();
         return new FlesValue(ValueType.Boolean, self && vBool);
     }
 
-    public FlesValue or(FlesValue v) throws Exception{
-        if(!(getData() instanceof Boolean || v.getData() instanceof Boolean)){
+    public FlesValue or(FlesValue v) throws Exception {
+        if (!(getData() instanceof Boolean || v.getData() instanceof Boolean)) {
             InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
         }
-        boolean self = (boolean)getData();
-        boolean vBool = (boolean)v.getData();
+        boolean self = getData();
+        boolean vBool = v.getData();
         return new FlesValue(ValueType.Boolean, self || vBool);
     }
 
-    public FlesValue not() throws Exception{
-        if(!(getData() instanceof Boolean)){
+    public FlesValue not() throws Exception {
+        if (!(getData() instanceof Boolean)) {
             InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
         }
         return new FlesValue(ValueType.Boolean, !((boolean) getData()));

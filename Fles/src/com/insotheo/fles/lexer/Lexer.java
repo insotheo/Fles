@@ -7,26 +7,26 @@ public class Lexer {
     public Lexer(String input) throws Exception {
         content = input;
         pos = 0;
-        if(content.isEmpty()){
+        if (content.isEmpty()) {
             throw new Exception("Content length is zero!");
         }
         content += " ";
     }
 
-    public Token next() throws Exception{
-        while(pos < content.length()){
-            if(Character.isWhitespace(content.charAt(pos)) || content.charAt(pos) == ' '){
+    public Token next() throws Exception {
+        while (pos < content.length()) {
+            if (Character.isWhitespace(content.charAt(pos)) || content.charAt(pos) == ' ') {
                 pos++;
                 continue;
             }
             char current = content.charAt(pos);
 
-            if(Character.isDigit(current)){
+            if (Character.isDigit(current)) {
                 String number = "";
                 boolean floatPoint = false;
-                while(pos < content.length() && (Character.isDigit(content.charAt(pos)) || content.charAt(pos) == '.')){
-                    if(content.charAt(pos) == '.'){
-                        if(floatPoint){
+                while (pos < content.length() && (Character.isDigit(content.charAt(pos)) || content.charAt(pos) == '.')) {
+                    if (content.charAt(pos) == '.') {
+                        if (floatPoint) {
                             throw new Exception(String.format("Incorrect number format at index %d!", pos));
                         }
                         floatPoint = true;
@@ -34,39 +34,52 @@ public class Lexer {
                     number += content.charAt(pos);
                     pos++;
                 }
-                if(number.endsWith(".")){
+                if (number.endsWith(".")) {
                     number += "0";
                 }
                 return new Token(TokenType.Number, number);
             }
 
-            if(Character.isLetter(current) || current == '_'){
+            if (Character.isLetter(current) || current == '_') {
                 String identifier = "";
-                while(pos < content.length() &&
+                while (pos < content.length() &&
                         (Character.isLetter(content.charAt(pos)) ||
                                 Character.isDigit(content.charAt(pos)) ||
-                                content.charAt(pos) == '_')){
+                                content.charAt(pos) == '_')) {
                     identifier += content.charAt(pos);
                     pos++;
                 }
 
-                switch (identifier){
-                    case "true": return new Token(TokenType.True, null);
-                    case "false": return new Token(TokenType.False, null);
-                    case "let": return new Token(TokenType.Let, null);
-                    case "fn": return new Token(TokenType.Fn, null);
-                    case "return": return new Token(TokenType.Return, null);
-                    case "delete": return new Token(TokenType.Delete, null);
-                    case "global": return new Token(TokenType.GlobalModifier, null);
+                switch (identifier) {
+                    case "true":
+                        return new Token(TokenType.True, null);
+                    case "false":
+                        return new Token(TokenType.False, null);
+                    case "let":
+                        return new Token(TokenType.Let, null);
+                    case "fn":
+                        return new Token(TokenType.Fn, null);
+                    case "return":
+                        return new Token(TokenType.Return, null);
+                    case "delete":
+                        return new Token(TokenType.Delete, null);
+                    case "global":
+                        return new Token(TokenType.GlobalModifier, null);
                 }
 
                 return new Token(TokenType.Identifier, identifier);
             }
 
-            switch (current){
-                case '+': pos++; return new Token(TokenType.Plus, null);
-                case '-': pos++; return new Token(TokenType.Minus, null);
-                case '*': pos++; return new Token(TokenType.Asterisk, null);
+            switch (current) {
+                case '+':
+                    pos++;
+                    return new Token(TokenType.Plus, null);
+                case '-':
+                    pos++;
+                    return new Token(TokenType.Minus, null);
+                case '*':
+                    pos++;
+                    return new Token(TokenType.Asterisk, null);
                 case '/': {
                     pos++;
                     if (content.charAt(pos) == '/') { //comment
@@ -78,47 +91,69 @@ public class Lexer {
                         return new Token(TokenType.Slash, null);
                     }
                 }
-                case '%': pos++; return new Token(TokenType.PercentSign, null);
-
-                case '(': pos++; return new Token(TokenType.LParen, null);
-                case ')': pos++; return new Token(TokenType.RParen, null);
-                case '{': pos++; return new Token(TokenType.LBrace, null);
-                case '}': pos++; return new Token(TokenType.RBrace, null);
-                case '[':{
+                case '%':
                     pos++;
-                    if(content.charAt(pos) == ']'){
+                    return new Token(TokenType.PercentSign, null);
+
+                case '(':
+                    pos++;
+                    return new Token(TokenType.LParen, null);
+                case ')':
+                    pos++;
+                    return new Token(TokenType.RParen, null);
+                case '{':
+                    pos++;
+                    return new Token(TokenType.LBrace, null);
+                case '}':
+                    pos++;
+                    return new Token(TokenType.RBrace, null);
+                case '[': {
+                    pos++;
+                    if (content.charAt(pos) == ']') {
                         pos++;
                         return new Token(TokenType.ArrayDef, null); //[]
                     }
                     return new Token(TokenType.LSquareBracket, null);
                 }
-                case ']': pos++; return new Token(TokenType.RSquareBracket, null);
-
-                case '.': pos++; return new Token(TokenType.Point, null);
-                case ';': pos++; return new Token(TokenType.Semicolon, null);
-                case ',': pos++; return new Token(TokenType.Comma, null);
-                case '@': pos++; return new Token(TokenType.At, null);
-                case ':': pos++; return new Token(TokenType.Colon, null);
-
-                case '=':{
+                case ']':
                     pos++;
-                    if(content.charAt(pos) == '='){
+                    return new Token(TokenType.RSquareBracket, null);
+
+                case '.':
+                    pos++;
+                    return new Token(TokenType.Point, null);
+                case ';':
+                    pos++;
+                    return new Token(TokenType.Semicolon, null);
+                case ',':
+                    pos++;
+                    return new Token(TokenType.Comma, null);
+                case '@':
+                    pos++;
+                    return new Token(TokenType.At, null);
+                case ':':
+                    pos++;
+                    return new Token(TokenType.Colon, null);
+
+                case '=': {
+                    pos++;
+                    if (content.charAt(pos) == '=') {
                         pos++;
                         return new Token(TokenType.Equality, null); //==
                     }
                     return new Token(TokenType.EqualSign, null);
                 }
-                case '&':{
+                case '&': {
                     pos++;
-                    if(content.charAt(pos) == '&'){
+                    if (content.charAt(pos) == '&') {
                         pos++;
                         return new Token(TokenType.LogicAnd, null); //&&
                     }
                     return new Token(TokenType.Ampersand, null);
                 }
-                case '|':{
+                case '|': {
                     pos++;
-                    if(content.charAt(pos) == '|'){
+                    if (content.charAt(pos) == '|') {
                         pos++;
                         return new Token(TokenType.LogicOr, null); //||
                     }
@@ -126,20 +161,19 @@ public class Lexer {
                 }
                 case '!': {
                     pos++;
-                    if(content.charAt(pos) == '='){
+                    if (content.charAt(pos) == '=') {
                         pos++;
                         return new Token(TokenType.NotEqual, null);
                     }
                     return new Token(TokenType.LogicNot, null);
                 } //!
 
-                case '>':{
+                case '>': {
                     pos++;
-                    if(content.charAt(pos) == '='){
+                    if (content.charAt(pos) == '=') {
                         pos++;
                         return new Token(TokenType.MoreOrEqual, null); //>=
-                    }
-                    else if(content.charAt(pos) == '>'){
+                    } else if (content.charAt(pos) == '>') {
                         pos++;
                         return new Token(TokenType.RightShift, null); //>>
                     }
@@ -147,38 +181,37 @@ public class Lexer {
                 }
                 case '<': {
                     pos++;
-                    if(content.charAt(pos) == '='){
+                    if (content.charAt(pos) == '=') {
                         pos++;
                         return new Token(TokenType.LessOrEqual, null); //<=
-                    }
-                    else if(content.charAt(pos) == '<'){
+                    } else if (content.charAt(pos) == '<') {
                         pos++;
                         return new Token(TokenType.LeftShift, null); //<<
                     }
                     return new Token(TokenType.LessThan, null); //<
                 }
 
-                case '\'':{
+                case '\'': {
                     pos++;
-                    if(content.charAt(pos) != '\''){
+                    if (content.charAt(pos) != '\'') {
                         String literal = String.valueOf(content.charAt(pos));
                         pos++;
-                        if(pos < content.length() && content.charAt(pos) == '\''){
+                        if (pos < content.length() && content.charAt(pos) == '\'') {
                             pos++;
                         }
                         return new Token(TokenType.CharLiteral, literal);
                     }
                     return new Token(TokenType.SingleQuote, null);
                 }
-                case '"':{
+                case '"': {
                     pos++;
-                    if(content.charAt(pos) != '"'){
+                    if (content.charAt(pos) != '"') {
                         String literal = "";
-                        while(pos < content.length() && content.charAt(pos) != '"'){
+                        while (pos < content.length() && content.charAt(pos) != '"') {
                             literal += content.charAt(pos);
                             pos++;
                         }
-                        if(pos < content.length() && content.charAt(pos) == '"'){
+                        if (pos < content.length() && content.charAt(pos) == '"') {
                             pos++;
                         }
                         return new Token(TokenType.StringLiteral, literal);
@@ -194,16 +227,15 @@ public class Lexer {
         return new Token(TokenType.EOF, null);
     }
 
-    public Vector2D getPosition(){
+    public Vector2D getPosition() {
         int line = 1;
         int column = 1;
 
-        for(int i = 0; i < pos; i++){
-            if(content.charAt(i) == '\n'){
+        for (int i = 0; i < pos; i++) {
+            if (content.charAt(i) == '\n') {
                 line++;
                 column = 1;
-            }
-            else{
+            } else {
                 column++;
             }
         }

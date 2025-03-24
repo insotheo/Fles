@@ -9,7 +9,7 @@ public class StringDataType extends DataType {
         super(ValueType.StringLiteral);
     }
 
-    public static boolean isDataMatch(Object data){
+    public static boolean isDataMatch(Object data) {
         return data instanceof String;
     }
 
