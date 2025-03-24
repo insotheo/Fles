@@ -113,6 +113,11 @@ public class FlesEvaluate {
 
         }
 
+        else if(node.getClass() == NotNode.class){
+            FlesValue val = new FlesValue(ValueType.Boolean, evalExpression(((NotNode) node).getExpression(), variables).getData());
+            return val.not();
+        }
+
         InterpreterExceptions.throwRuntimeError("Parsing expression failure!");
         return null;
     }

@@ -160,7 +160,13 @@ public class Parser {
             return new BinaryOperationNode(multiplier, OperationValue.Multiplication, value);
         }
 
-        if(currentToken.type == TokenType.Number){
+        else if(currentToken.type == TokenType.LogicNot){
+            eatFatal(TokenType.LogicNot);
+            ASTNode expression = parseFactor();
+            return new NotNode(expression);
+        }
+
+        else if(currentToken.type == TokenType.Number){
             NumberNode number = new NumberNode(Double.parseDouble(currentToken.value));
             eatFatal(TokenType.Number);
             return number;

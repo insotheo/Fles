@@ -188,4 +188,11 @@ public class FlesValue {
         return new FlesValue(ValueType.Boolean, self || vBool);
     }
 
+    public FlesValue not() throws Exception{
+        if(!(getData() instanceof Boolean)){
+            InterpreterExceptions.throwRuntimeError("Unknown error: bool is not bool...");
+        }
+        return new FlesValue(ValueType.Boolean, !((boolean) getData()));
+    }
+
 }
