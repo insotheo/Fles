@@ -31,6 +31,15 @@ public class Parser {
 
         if (eat(TokenType.LBrace)) { //block
             return parseBlock();
+        } else if (eat(TokenType.Module)) {
+            fatalCheck(TokenType.Identifier);
+            String moduleName = currentToken.value;
+            eatFatal(TokenType.Identifier);
+
+            fatalCheck(TokenType.LBrace);
+            eatFatal(TokenType.LBrace);
+            BlockNode moduleBody = parseBlock();
+            return new ModuleNode(moduleName, moduleBody);
         } else if (eat(TokenType.Let)) { //variable definition
             //let <identifier> : <data_type> ...
             fatalCheck(TokenType.Identifier);
@@ -110,17 +119,29 @@ public class Parser {
         } else if (currentToken.type == TokenType.Identifier) {
             String identifier = currentToken.value;
             eat(TokenType.Identifier);
+
+            List<String> identifiers = new ArrayList<>();
+            identifiers.add(identifier);
+            while (eat(TokenType.Dot)) {
+                fatalCheck(TokenType.Identifier);
+                identifiers.add(currentToken.value);
+                eatFatal(TokenType.Identifier);
+            }
+
             if (eat(TokenType.EqualSign)) { //assignment: <identifier> = <expression>;
-                VariableNode variable = new VariableNode("auto", identifier);
+                VariableNode variable = new VariableNode("auto", String.join(".", identifiers));
                 ASTNode expression = parseExpression();
                 eatFatal(TokenType.Semicolon);
                 return new AssignmentNode(variable, expression, false);
             } else if (currentToken.type == TokenType.LParen) { //function call
-                FunctionCallNode functionCall = parseFunctionCall(identifier);
+                FunctionCallNode functionCall = parseFunctionCall(String.join(".", identifiers));
                 eatFatal(TokenType.Semicolon);
                 return functionCall;
+            } else {
+                eatFatal(TokenType.Semicolon);
+                return new QualifiedIdentifierNode(String.join(".", identifiers));
             }
-        } else if(eat(TokenType.If)){
+        } else if (eat(TokenType.If)) {
             List<ConditionBlock> blocks = new ArrayList<>();
             BlockNode elseBlock = null;
 
@@ -132,9 +153,9 @@ public class Parser {
 
             blocks.add(new ConditionBlock(ifExpression, ifBody)); //if
 
-            while(currentToken != null){
-                if(eat(TokenType.Else)){
-                    if(eat(TokenType.If)){ //else if
+            while (currentToken != null) {
+                if (eat(TokenType.Else)) {
+                    if (eat(TokenType.If)) { //else if
                         eatFatal(TokenType.LParen);
                         ASTNode elifExpression = parseExpression();
                         eatFatal(TokenType.RParen);
@@ -223,8 +244,8 @@ public class Parser {
                 (currentToken.type == TokenType.Asterisk
                         || currentToken.type == TokenType.Slash
                         || currentToken.type == TokenType.Bucks
-                        )) {
-            OperationValue operator = switch (currentToken.type){
+                )) {
+            OperationValue operator = switch (currentToken.type) {
                 case Asterisk -> OperationValue.Multiplication;
                 case Slash -> OperationValue.Division;
                 case Bucks -> OperationValue.Cast;

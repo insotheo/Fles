@@ -1,29 +1,22 @@
 package com.insotheo.fles.interpreter;
 
-import com.insotheo.fles.interpreter.blocks.FlesFunction;
-import com.insotheo.fles.interpreter.data.*;
+import com.insotheo.fles.interpreter.data.DataType;
+import com.insotheo.fles.interpreter.data.FlesValue;
+import com.insotheo.fles.interpreter.data.Module;
+import com.insotheo.fles.interpreter.data.ModuleStack;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InterpreterData {
-    public static FunctionStack functions = new FunctionStack();
-    public static VariableStack globalVariables = new VariableStack();
-    public static Map<String, DataType> dataTypes = new HashMap<>();
+    public static Map<String, DataType> dataTypes = null;
+    public static Module zeroModule = null;
+    public static ModuleStack modules = null;
 
-    /// FUNCTIONS
-
-    public static BlockReturn callFunction(String name, List<FlesValue> arguments) throws Exception {
-        return functions.callFunction(name, arguments);
-    }
-
-    public static void addFunction(String name, FlesFunction function) throws Exception {
-        functions.pushFunction(name, function);
-    }
-
-    public static boolean isFunctionExist(String name) {
-        return functions.isFunctionInStack(name);
+    public static void init() {
+        dataTypes = new HashMap<>();
+        zeroModule = new Module();
+        modules = new ModuleStack();
     }
 
     /// DATA TYPES
@@ -59,27 +52,5 @@ public class InterpreterData {
         }
         InterpreterExceptions.throwRuntimeError("No type instead of 'auto' found!");
         return null;
-    }
-
-    /// GLOBAL VARIABLES
-
-    public static FlesVariable getVariable(String name) throws Exception {
-        return globalVariables.getVariable(name);
-    }
-
-    public static void addGlobalVariable(String name, FlesVariable var) throws Exception {
-        globalVariables.pushVariable(name, var);
-    }
-
-    public static boolean isGlobalVariableAlreadyExist(String name) {
-        return globalVariables.isVariableInStack(name);
-    }
-
-    public static void setGlobalVariableValue(String name, FlesValue value) throws Exception {
-        globalVariables.setVariableValue(name, value);
-    }
-
-    public static void deleteGlobalVariable(String name) throws Exception {
-        globalVariables.popVariable(name);
     }
 }

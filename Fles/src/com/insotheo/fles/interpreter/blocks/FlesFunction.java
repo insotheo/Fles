@@ -2,7 +2,6 @@ package com.insotheo.fles.interpreter.blocks;
 
 import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.ast.ParameterNode;
-import com.insotheo.fles.interpreter.FlesEvaluate;
 import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
 import com.insotheo.fles.interpreter.data.BlockReturn;
@@ -42,10 +41,11 @@ public class FlesFunction extends InterpreterBlock {
         }
         parameters.setVariablesValues(arguments);
 
-        BlockReturn returnValue = FlesEvaluate.evalFunction(this);
+//        BlockReturn returnValue = FlesEvaluate.evalFunction(this);
 
         clearParametersValues();
-        return returnValue;
+//        return returnValue;
+        return null;
     }
 
     public VariableStack getParameters() {

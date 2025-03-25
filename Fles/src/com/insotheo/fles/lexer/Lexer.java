@@ -51,6 +51,8 @@ public class Lexer {
                 }
 
                 switch (identifier) {
+                    case "module":
+                        return new Token(TokenType.Module, null);
                     case "true":
                         return new Token(TokenType.True, null);
                     case "false":
@@ -125,7 +127,7 @@ public class Lexer {
 
                 case '.':
                     pos++;
-                    return new Token(TokenType.Point, null);
+                    return new Token(TokenType.Dot, null);
                 case ';':
                     pos++;
                     return new Token(TokenType.Semicolon, null);
