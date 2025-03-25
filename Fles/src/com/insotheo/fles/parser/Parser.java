@@ -149,9 +149,7 @@ public class Parser {
             NumberNode number = new NumberNode(Double.parseDouble(currentToken.value));
             eatFatal(TokenType.Number);
             return number;
-        }
-
-        if (currentToken.type == TokenType.True || currentToken.type == TokenType.False) {
+        } else if (currentToken.type == TokenType.True || currentToken.type == TokenType.False) {
             BooleanNode bool = new BooleanNode(currentToken.type == TokenType.True);
             eatFatal(currentToken.type);
             return bool;
@@ -190,8 +188,17 @@ public class Parser {
     private ASTNode parseTerm() throws Exception { //for * or /
         ASTNode left = parseFactor();
 
-        while (currentToken != null && (currentToken.type == TokenType.Asterisk || currentToken.type == TokenType.Slash)) {
-            OperationValue operator = currentToken.type == TokenType.Asterisk ? OperationValue.Multiplication : OperationValue.Division;
+        while (currentToken != null &&
+                (currentToken.type == TokenType.Asterisk
+                        || currentToken.type == TokenType.Slash
+                        || currentToken.type == TokenType.Bucks
+                        )) {
+            OperationValue operator = switch (currentToken.type){
+                case Asterisk -> OperationValue.Multiplication;
+                case Slash -> OperationValue.Division;
+                case Bucks -> OperationValue.Cast;
+                default -> OperationValue.Unknown;
+            };
             eatFatal(currentToken.type);
             ASTNode right = parseFactor();
             left = new BinaryOperationNode(left, operator, right);

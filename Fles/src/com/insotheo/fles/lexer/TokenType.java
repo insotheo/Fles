@@ -2,7 +2,7 @@ package com.insotheo.fles.lexer;
 
 public enum TokenType {
     Plus, Minus, Asterisk, Slash, EqualSign, PercentSign, Point, At, Colon,
-    Semicolon, Comma, SingleQuote, Ampersand, Pipe,
+    Semicolon, Comma, SingleQuote, Ampersand, Pipe, Bucks,
 
     LessThan, MoreThan, LessOrEqual, MoreOrEqual, LogicOr, LogicAnd, Equality, LogicNot, NotEqual,
     LeftShift, RightShift,

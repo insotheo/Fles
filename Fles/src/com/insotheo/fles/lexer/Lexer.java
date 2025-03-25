@@ -134,6 +134,9 @@ public class Lexer {
                 case ':':
                     pos++;
                     return new Token(TokenType.Colon, null);
+                case '$':
+                    pos++;
+                    return new Token(TokenType.Bucks, null);
 
                 case '=': {
                     pos++;

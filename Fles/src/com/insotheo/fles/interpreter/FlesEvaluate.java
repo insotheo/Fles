@@ -30,6 +30,10 @@ public class FlesEvaluate {
             FlesValue value = null;
             String varType = "";
 
+            if(InterpreterData.isTypeDefined(varName)){
+                return new FlesValue(ValueType.Type, varName);
+            }
+
             if (variables.isVariableInStack(varName)) {
                 final FlesVariable variable = variables.getVariable(varName);
                 value = variable.getValue();
@@ -94,6 +98,18 @@ public class FlesEvaluate {
 
                 case LogicalAnd:
                     return left.and(right);
+
+                case Cast:
+                {
+                    if(!(left.getData() instanceof String || left.getType() == ValueType.Type)){
+                        InterpreterExceptions.throwRuntimeError("Failure while casting. Not a type name.");
+                    }
+                    String typeName = left.getData().toString();
+                    if(!InterpreterData.isTypeDefined(typeName)){
+                        InterpreterExceptions.throwRuntimeError(String.format("Failure while casting. Type '%s' not found!", typeName));
+                    }
+                    return new FlesValue(typeName, InterpreterData.getDataType(typeName).cast(right.getData()));
+                }
 
                 default:
                     InterpreterExceptions.throwRuntimeError("Unknown operation!");

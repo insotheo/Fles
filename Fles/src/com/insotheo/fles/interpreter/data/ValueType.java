@@ -4,5 +4,6 @@ public enum ValueType {
     Numeric,
     CharLiteral, StringLiteral,
     Boolean,
+    Type,
     Unknown
 }

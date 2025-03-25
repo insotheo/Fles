@@ -1,4 +1,4 @@
 fn main() : void{
-    let a : bool = 1 < 2;
-    std_println(!a && true);
+    std_println(bool$(1));
+    std_println(bool$(0));
 }
