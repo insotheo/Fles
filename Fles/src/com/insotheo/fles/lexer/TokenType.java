@@ -7,6 +7,7 @@ public enum TokenType {
     LessThan, MoreThan, LessOrEqual, MoreOrEqual, LogicOr, LogicAnd, Equality, LogicNot, NotEqual,
     LeftShift, RightShift,
 
+    If, Else,
     True, False,
 
     LParen, RParen, LBrace, RBrace, LSquareBracket, RSquareBracket,

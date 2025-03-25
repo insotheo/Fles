@@ -120,6 +120,37 @@ public class Parser {
                 eatFatal(TokenType.Semicolon);
                 return functionCall;
             }
+        } else if(eat(TokenType.If)){
+            List<ConditionBlock> blocks = new ArrayList<>();
+            BlockNode elseBlock = null;
+
+            eatFatal(TokenType.LParen);
+            ASTNode ifExpression = parseExpression();
+            eatFatal(TokenType.RParen);
+            eatFatal(TokenType.LBrace);
+            BlockNode ifBody = parseBlock();
+
+            blocks.add(new ConditionBlock(ifExpression, ifBody)); //if
+
+            while(currentToken != null){
+                if(eat(TokenType.Else)){
+                    if(eat(TokenType.If)){ //else if
+                        eatFatal(TokenType.LParen);
+                        ASTNode elifExpression = parseExpression();
+                        eatFatal(TokenType.RParen);
+                        eatFatal(TokenType.LBrace);
+                        BlockNode elifBody = parseBlock();
+                        blocks.add(new ConditionBlock(elifExpression, elifBody));
+                        continue;
+                    }
+                    eatFatal(TokenType.LBrace);
+                    elseBlock = parseBlock();
+                    break;
+                }
+                break;
+            }
+
+            return new IfBranch(blocks, elseBlock);
         }
 
         ParserExceptions.throwUnknownCommandException(currentTokenValue);

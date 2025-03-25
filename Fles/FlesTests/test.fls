@@ -1,4 +1,8 @@
 fn main() : void{
-    std_println(bool$(1));
-    std_println(bool$(0));
+    if(1 > 2){
+        std_println("Hello, World!");
+    }
+    else{
+        std_println("What?");
+    }
 }

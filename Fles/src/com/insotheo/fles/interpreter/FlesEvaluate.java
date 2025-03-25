@@ -174,6 +174,25 @@ public class FlesEvaluate {
                 }
             } else if (node.getClass() == BlockNode.class) {
                 evalBlock(((BlockNode) node).getStatements(), variables);
+            } else if(node.getClass() == IfBranch.class){
+                IfBranch branch = ((IfBranch) node);
+                boolean finished = false;
+                for(ConditionBlock block : branch.getBranches()){
+                    FlesValue expressionResult = evalExpression(block.getExpression(), variables);
+                    if(expressionResult.getType() != ValueType.Boolean || !(expressionResult.getData() instanceof Boolean)){
+                        InterpreterExceptions.throwRuntimeError("If-expression can be only boolean value!");
+                    }
+                    if(((boolean)expressionResult.getData())){
+                        evalBlock(block.getBody().getStatements(), variables);
+                        finished = true;
+                        break;
+                    }
+                }
+                if(!finished){
+                    if(branch.getElseBranch() != null){
+                        evalBlock(branch.getElseBranch().getStatements(), variables);
+                    }
+                }
             }
         }
 
