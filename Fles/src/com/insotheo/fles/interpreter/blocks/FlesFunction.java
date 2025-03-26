@@ -2,25 +2,26 @@ package com.insotheo.fles.interpreter.blocks;
 
 import com.insotheo.fles.ast.ASTNode;
 import com.insotheo.fles.ast.ParameterNode;
+import com.insotheo.fles.interpreter.FlesEvaluate;
 import com.insotheo.fles.interpreter.InterpreterData;
 import com.insotheo.fles.interpreter.InterpreterExceptions;
-import com.insotheo.fles.interpreter.data.BlockReturn;
-import com.insotheo.fles.interpreter.data.FlesValue;
-import com.insotheo.fles.interpreter.data.FlesVariable;
-import com.insotheo.fles.interpreter.data.VariableStack;
+import com.insotheo.fles.interpreter.data.*;
+import com.insotheo.fles.interpreter.data.Module;
 
 import java.util.List;
 
 public class FlesFunction extends InterpreterBlock {
     protected VariableStack parameters;
     protected String returnTypeName;
+    private Module module;
 
     protected FlesFunction() {
     }
 
-    public FlesFunction(List<ASTNode> statements, List<ParameterNode> parameters, String returnTypeName) throws Exception {
+    public FlesFunction(Module mod, List<ASTNode> statements, List<ParameterNode> parameters, String returnTypeName) throws Exception {
         this.statements = statements;
         this.parameters = new VariableStack();
+        this.module = mod;
 
         if (!InterpreterData.isTypeDefined(returnTypeName)) {
             InterpreterExceptions.throwUnknownDataType(returnTypeName);
@@ -41,11 +42,10 @@ public class FlesFunction extends InterpreterBlock {
         }
         parameters.setVariablesValues(arguments);
 
-//        BlockReturn returnValue = FlesEvaluate.evalFunction(this);
+        BlockReturn returnValue = FlesEvaluate.evalFunction(this);
 
         clearParametersValues();
-//        return returnValue;
-        return null;
+        return returnValue;
     }
 
     public VariableStack getParameters() {
@@ -58,5 +58,9 @@ public class FlesFunction extends InterpreterBlock {
 
     public void clearParametersValues() throws Exception {
         parameters.clearStackValues();
+    }
+
+    public Module getModule() {
+        return module;
     }
 }

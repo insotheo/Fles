@@ -65,8 +65,6 @@ public class Lexer {
                         return new Token(TokenType.Return, null);
                     case "delete":
                         return new Token(TokenType.Delete, null);
-                    case "global":
-                        return new Token(TokenType.GlobalModifier, null);
                     case "if":
                         return new Token(TokenType.If, null);
                     case "else":

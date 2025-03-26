@@ -15,7 +15,7 @@ public enum TokenType {
     Number, StringLiteral, CharLiteral, Identifier,
 
     Module,
-    ArrayDef, Let, Fn, Return, Delete, GlobalModifier,
+    ArrayDef, Let, Fn, Return, Delete,
 
     EOF, Unknown
 }

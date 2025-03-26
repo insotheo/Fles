@@ -101,19 +101,12 @@ public class Parser {
             eatFatal(TokenType.Semicolon);
             return new ReturnNode(value);
         } else if (eat(TokenType.Delete)) {
-            boolean isGlobal = eat(TokenType.GlobalModifier);
-
             fatalCheck(TokenType.Identifier);
             String identifier = currentToken.value;
             eatFatal(TokenType.Identifier);
             eatFatal(TokenType.Semicolon);
 
-            DeleteTypeValue type = DeleteTypeValue.Unknown;
-            if (isGlobal) {
-                type = DeleteTypeValue.GlobalVariable;
-            } else {
-                type = DeleteTypeValue.Variable;
-            }
+            DeleteTypeValue type = DeleteTypeValue.Variable;
 
             return new DeleteNode(identifier, type);
         } else if (currentToken.type == TokenType.Identifier) {

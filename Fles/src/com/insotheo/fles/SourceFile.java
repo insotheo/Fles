@@ -50,7 +50,7 @@ public class SourceFile {
             FlesInterpreter instance = new FlesInterpreter(sourceNodes);
             instance.callMain();
         } catch (Exception ex) {
-            System.err.printf("Fles runtime error: %s%n", ex.getMessage());
+            System.err.printf("Fles runtime error: %s", ex.getMessage());
         }
     }
 

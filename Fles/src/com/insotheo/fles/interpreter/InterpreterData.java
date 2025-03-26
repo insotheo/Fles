@@ -1,22 +1,34 @@
 package com.insotheo.fles.interpreter;
 
+import com.insotheo.fles.interpreter.data.BlockReturn;
 import com.insotheo.fles.interpreter.data.DataType;
 import com.insotheo.fles.interpreter.data.FlesValue;
 import com.insotheo.fles.interpreter.data.Module;
-import com.insotheo.fles.interpreter.data.ModuleStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InterpreterData {
     public static Map<String, DataType> dataTypes = null;
     public static Module zeroModule = null;
-    public static ModuleStack modules = null;
 
     public static void init() {
         dataTypes = new HashMap<>();
         zeroModule = new Module();
-        modules = new ModuleStack();
+    }
+
+    /// Modules worker
+
+    public static BlockReturn callFunction(Module current, String name, List<FlesValue> arguments) throws Exception {
+        if (current == null) {
+            return zeroModule.findAndCallFunction(name, arguments);
+        }
+        return current.findAndCallFunction(name, arguments);
+    }
+
+    public static boolean isFunctionInModule(String name) {
+        return zeroModule.isFunctionInModule(name);
     }
 
     /// DATA TYPES

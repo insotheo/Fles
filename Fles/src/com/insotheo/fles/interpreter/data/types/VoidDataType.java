@@ -1,4 +1,4 @@
-package com.insotheo.fles.interpreter.std.types;
+package com.insotheo.fles.interpreter.data.types;
 
 import com.insotheo.fles.interpreter.data.DataType;
 import com.insotheo.fles.interpreter.data.ValueType;

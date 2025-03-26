@@ -1,9 +1,12 @@
-module MyModule{
-    fn sayHello(){
-        Console.writeln("Hello, World!");
+module Program{
+    fn main(){
+        let x : int = 3;
+        if(x > 2){
+            Console.writeln(x);
+        }
     }
 }
 
 fn main(){
-    MyModule.sayHello();
+    Program.main();
 }
