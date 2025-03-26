@@ -4,6 +4,10 @@ module Program{
         if(x > 2){
             Console.writeln(x);
         }
+
+        if(true){
+            Console.exit();
+        }
     }
 }
 
