@@ -1,12 +1,9 @@
 module Program{
     fn main(){
-        let x : int = 3;
-        if(x > 2){
+        let x : int = 0;
+        while(x < 1000){
             Console.writeln(x);
-        }
-
-        if(true){
-            Console.exit();
+            x = x + 1;
         }
     }
 }

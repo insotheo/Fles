@@ -165,6 +165,13 @@ public class Parser {
             }
 
             return new IfBranch(blocks, elseBlock);
+        } else if(eat(TokenType.While)){
+            eatFatal(TokenType.LParen);
+            ASTNode expr = parseExpression();
+            eatFatal(TokenType.RParen);
+            eatFatal(TokenType.LBrace);
+            BlockNode loopBody = parseBlock();
+            return new WhileLoop(expr, loopBody);
         }
 
         ParserExceptions.throwUnknownCommandException(currentTokenValue);

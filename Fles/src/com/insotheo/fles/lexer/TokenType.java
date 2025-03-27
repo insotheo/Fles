@@ -16,6 +16,7 @@ public enum TokenType {
 
     Module,
     ArrayDef, Let, Fn, Return, Delete,
+    While,
 
     EOF, Unknown
 }

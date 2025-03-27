@@ -183,6 +183,17 @@ public class FlesEvaluate {
                         evalBlock(current, branch.getElseBranch().getStatements(), variables);
                     }
                 }
+            } else if(node.getClass() == WhileLoop.class){
+                WhileLoop loop = ((WhileLoop) node);
+                FlesValue condition = evalExpression(current, loop.getExpression(), variables);
+                if(!(condition.getData() instanceof Boolean)){
+                    InterpreterExceptions.throwRuntimeError("Condition for while-loop might return bool!");
+                }
+                if(((boolean) condition.getData())){
+                    while(((boolean) evalExpression(current, loop.getExpression(), variables).getData())){
+                        evalBlock(current, loop.getBody().getStatements(), variables);
+                    }
+                }
             }
         }
 
